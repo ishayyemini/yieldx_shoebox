@@ -37,6 +37,6 @@ class APIClass {
   }
 }
 
-const API = new APIClass()
+const API: APIClass = new APIClass()
 
 export default API

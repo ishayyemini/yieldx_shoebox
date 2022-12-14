@@ -6,13 +6,15 @@
 .*/index.js
 
 [include]
+.*/src/App.js
+.*/data/.*
+.*/components/.*
 
 [libs]
 
 [lints]
 
 [options]
-all=true
 react.runtime=automatic
 
 [strict]

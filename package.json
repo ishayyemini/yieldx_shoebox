@@ -7,9 +7,13 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "grommet": "^2.28.0",
+    "i18next": "^22.4.5",
+    "i18next-browser-languagedetector": "^7.0.1",
     "nested-property": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-i18next": "^12.1.1",
+    "react-loader-spinner": "^5.3.4",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
@@ -25,7 +29,8 @@
     "tabWidth": 2,
     "semi": false,
     "singleQuote": true,
-    "proseWrap": "always"
+    "proseWrap": "always",
+    "parser": "babel-flow"
   },
   "eslintConfig": {
     "extends": [
