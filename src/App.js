@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react'
+import { Grommet } from 'grommet'
+import type { ThemeType } from 'grommet'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import GlobalContext from './data/GlobalContext'
+import API from './data/API'
+import ChooseReport from './components/ChooseReport'
+
+const theme: ThemeType = {
+  global: {
+    font: { family: 'Lato, sans-serif' },
+  },
 }
 
-export default App;
+const App = () => {
+  const [globalState, setGlobalState] = useState({ report: null })
+
+  useEffect(() => {
+    API.configure(setGlobalState)
+  }, [])
+
+  return (
+    <div className="App">
+      <Grommet theme={theme}>
+        <GlobalContext.Provider
+          value={{ ...globalState, updateContext: setGlobalState }}
+        >
+          <ChooseReport />
+        </GlobalContext.Provider>
+      </Grommet>
+    </div>
+  )
+}
+
+export default App

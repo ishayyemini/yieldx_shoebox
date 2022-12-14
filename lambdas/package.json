@@ -1,0 +1,10 @@
+{
+  "name": "lambdas_shoebox",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mssql": "^9.0.1"
+  }
+}
