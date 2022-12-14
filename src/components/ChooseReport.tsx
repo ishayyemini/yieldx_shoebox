@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from 'react'
-import { Box, DataTable } from 'grommet'
+import { Box, Card, DataTable } from 'grommet'
 import { useTranslation } from 'react-i18next'
 import { Oval } from 'react-loader-spinner'
 
 import API from '../data/API'
 import GlobalContext from '../data/GlobalContext'
+import type { ReportType } from '../data/API'
 
-const ChooseReport: React.FC = () => {
+const ChooseReport = () => {
   const { report, updateContext } = useContext(GlobalContext)
 
   const [loading, toggleLoading] = useState(true)
-  const [reportList, setReportList] = useState([])
+  const [reportList, setReportList] = useState<Array<ReportType>>([])
 
   const { t } = useTranslation()
 
@@ -22,7 +23,7 @@ const ChooseReport: React.FC = () => {
   }, [])
 
   return (
-    <Box fill>
+    <Card margin={'medium'} background={'yellow'} fill>
       {loading ? (
         <Box align={'center'} justify={'center'} fill>
           <Oval />
@@ -57,7 +58,7 @@ const ChooseReport: React.FC = () => {
           ]}
           data={reportList}
           primaryKey={'UID'}
-          sort={{ property: 'dateCreated' }}
+          sort={{ property: 'dateCreated', direction: 'desc' }}
           onClickRow={({ datum }) =>
             updateContext((old) => ({ ...old, report: datum }))
           }
@@ -65,7 +66,7 @@ const ChooseReport: React.FC = () => {
           sortable
         />
       )}
-    </Box>
+    </Card>
   )
 }
 export default ChooseReport

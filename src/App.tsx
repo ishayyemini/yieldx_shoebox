@@ -47,7 +47,7 @@ const theme: ThemeType = {
   },
 }
 
-const App: React.FC = () => {
+const App = () => {
   const [globalState, setGlobalState] = useState({ report: null })
 
   useEffect(() => {
