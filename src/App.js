@@ -18,6 +18,7 @@ const App = () => {
   useEffect(() => {
     API.configure(setGlobalState)
   }, [])
+  //test
 
   return (
     <div className="App">
