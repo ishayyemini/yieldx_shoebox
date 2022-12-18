@@ -1,3 +1,5 @@
+import { UpdateContextType } from './GlobalContext'
+
 export type ReportType = {
   UID: string
   BoardID: string
@@ -24,9 +26,9 @@ export type ReportType = {
 }
 
 class APIClass {
-  _setGlobalState: Function
+  _setGlobalState: UpdateContextType = () => null
 
-  configure(setGlobalState: Function): void {
+  configure(setGlobalState: UpdateContextType): void {
     this._setGlobalState = setGlobalState
   }
 

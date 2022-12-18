@@ -3,7 +3,7 @@ import { Grommet, type ThemeType } from 'grommet'
 import { createGlobalStyle } from 'styled-components'
 
 import './data/i18n'
-import GlobalContext from './data/GlobalContext'
+import GlobalContext, { ContextType } from './data/GlobalContext'
 import API from './data/API'
 import ChooseReport from './components/ChooseReport'
 
@@ -48,7 +48,9 @@ const theme: ThemeType = {
 }
 
 const App = () => {
-  const [globalState, setGlobalState] = useState({ report: null })
+  const [globalState, setGlobalState] = useState({
+    report: undefined,
+  } as ContextType)
 
   useEffect(() => {
     API.configure(setGlobalState)

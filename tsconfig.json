@@ -2,9 +2,10 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "esnext",
-    "sourceMap": true,
     "jsx": "react-jsx",
-    "allowJs": true
+    "strict": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules/**", "lambdas/**/*.js"]
 }

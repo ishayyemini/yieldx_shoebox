@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
-import { Box, Card, DataTable } from 'grommet'
+import { Box, DataTable } from 'grommet'
 import { useTranslation } from 'react-i18next'
 import { Oval } from 'react-loader-spinner'
 
-import API from '../data/API'
-import GlobalContext from '../data/GlobalContext'
-import type { ReportType } from '../data/API'
+import API, { ReportType } from '../data/API'
+import GlobalContext, { ContextType } from '../data/GlobalContext'
 
 const ChooseReport = () => {
   const { report, updateContext } = useContext(GlobalContext)
@@ -23,7 +22,7 @@ const ChooseReport = () => {
   }, [])
 
   return (
-    <Card margin={'medium'} background={'yellow'} fill>
+    <Box fill>
       {loading ? (
         <Box align={'center'} justify={'center'} fill>
           <Oval />
@@ -52,21 +51,24 @@ const ChooseReport = () => {
               property,
               header: t(`report.${property}`),
               render: ['dateCreated', 'DateToDB'].includes(property)
-                ? (datum) => new Date(datum.dateCreated).toLocaleString('en-GB')
-                : null,
+                ? (datum: ReportType) => (
+                    <>{new Date(datum.dateCreated).toLocaleString('en-GB')}</>
+                  )
+                : undefined,
             })),
           ]}
           data={reportList}
           primaryKey={'UID'}
           sort={{ property: 'dateCreated', direction: 'desc' }}
           onClickRow={({ datum }) =>
-            updateContext((old) => ({ ...old, report: datum }))
+            updateContext((old: ContextType) => ({ ...old, report: datum }))
           }
-          rowProps={{ [report?.UID]: { background: 'black' } }}
+          rowProps={{ [report?.UID ?? '']: { background: 'black' } }}
           sortable
+          pin
         />
       )}
-    </Card>
+    </Box>
   )
 }
 export default ChooseReport

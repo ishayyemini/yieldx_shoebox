@@ -35,6 +35,21 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": ["**/*.ts", "**/*.tsx"],
+        "excludedFiles": ["node_modules/**"],
+        "extends": [
+          "plugin:@typescript-eslint/recommended",
+          "react-app",
+          "react-app/jest"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+          "@typescript-eslint"
+        ]
+      }
     ]
   },
   "browserslist": {
