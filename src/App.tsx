@@ -1,49 +1,68 @@
 import { useEffect, useState } from 'react'
-import { Grommet, type ThemeType } from 'grommet'
-import { createGlobalStyle } from 'styled-components'
+import { Grommet, Main, type ThemeType } from 'grommet'
 
 import './data/i18n'
 import GlobalContext, { ContextType } from './data/GlobalContext'
 import API from './data/API'
-import ChooseReport from './components/ChooseReport'
-
-// noinspection CssInvalidPropertyValue
-const GlobalStyle = createGlobalStyle`
-  html {
-    height: -webkit-fill-available;
-  }
-  
-  body {
-    font-family: "Lato", sans-serif;
-    --main: #f9dec8ff;
-    --accent1: #90e39aff;
-    --accent2: #b26270ff;
-    --active: #ddf093ff;
-    --muted: #638475ff;
-    --body: #E0E0E0;
-
-    display: flex;
-    margin: 0;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-  
-  #root {
-    display: flex;
-    flex-grow: 1;
-    
-    > div {
-      display: flex;
-      flex-grow: 1;
-    }
-  }
-`
+// import ChooseReport from './components/ChooseReport'
+import GlobalStyle from './components/app/GlobalStyle'
+import { css } from 'styled-components'
+import SignIn from './components/SignIn'
 
 const theme: ThemeType = {
   global: {
     font: { family: 'Lato, sans-serif' },
+    colors: {
+      brand: 'var(--main)',
+      'accent-1': 'var(--accent1)',
+      'accent-2': 'var(--accent2)',
+      muted: 'var(--muted)',
+    },
+  },
+  card: {
+    body: { pad: 'small' },
+    container: {
+      background: 'var(--surface-variant)',
+      margin: 'small',
+      pad: 'small',
+      round: 'small',
+      elevation: 'none',
+      extend: css`
+        color: var(--on-surface-variant);
+      `,
+    },
+  },
+  button: {
+    primary: {
+      background: 'var(--primary)',
+      font: { weight: 400 },
+      extend: css`
+        color: var(--on-primary);
+        transition: opacity 0.2s;
+      `,
+    },
+    default: {
+      background: 'var(--secondary-container)',
+      font: { weight: 400 },
+      extend: css`
+        color: var(--on-secondary-container);
+        transition: opacity 0.2s;
+      `,
+    },
+    secondary: {
+      border: { color: 'var(--primary)', width: '1px' },
+      font: { weight: 400 },
+      extend: css`
+        color: var(--primary);
+        transition: opacity 0.2s;
+      `,
+    },
+    hover: {
+      extend: css`
+        opacity: 0.8;
+        transition: opacity 0.1s;
+      `,
+    },
   },
 }
 
@@ -62,7 +81,10 @@ const App = () => {
       <GlobalContext.Provider
         value={{ ...globalState, updateContext: setGlobalState }}
       >
-        <ChooseReport />
+        <Main>
+          <SignIn />
+          {/*<ChooseReport />*/}
+        </Main>
       </GlobalContext.Provider>
     </Grommet>
   )

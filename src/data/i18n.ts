@@ -29,6 +29,11 @@ i18n
             Mortality: 'Mortality',
             Disease: 'Disease',
           },
+          SignIn: {
+            title: 'Sign In',
+            username: 'Username',
+            buttonLogin: 'Login',
+          },
         },
       },
     },
