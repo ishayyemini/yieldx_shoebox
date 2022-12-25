@@ -1,3 +1,5 @@
+import queryString from 'query-string'
+
 import { UpdateContextType } from './GlobalContext'
 
 export type ReportType = {
@@ -26,16 +28,31 @@ export type ReportType = {
 }
 
 class APIClass {
+  _config: { user: string } = { user: '' }
   _setGlobalState: UpdateContextType = () => null
 
-  configure(setGlobalState: UpdateContextType): void {
-    this._setGlobalState = setGlobalState
+  configure(
+    { user }: { user: string },
+    setGlobalState?: UpdateContextType
+  ): void {
+    this._config = { user }
+    if (setGlobalState) this._setGlobalState = setGlobalState
   }
 
   async getReports(): Promise<ReportType[]> {
+    const username = this._config.user === 'all' ? '' : this._config.user
     return await fetch(
-      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-reports'
-    ).then((res) => res.json())
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-reports?' +
+        queryString.stringify({ username })
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        this._setGlobalState((oldCtx) => ({
+          ...oldCtx,
+          reportList: res.slice().reverse() ?? [],
+        }))
+        return res
+      })
   }
 }
 

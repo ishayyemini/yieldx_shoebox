@@ -1,7 +1,7 @@
 const sql = require('mssql')
 
-const get_reports = async () => {
-  console.log(`Fetching reports`)
+const get_reports = async ({ username }) => {
+  console.log(`Fetching reports of ${username ? `"${username}"` : 'everyone'}`)
 
   const config = {
     user: 'sa',
@@ -13,7 +13,11 @@ const get_reports = async () => {
   await sql.connect(config).catch((e) => console.log(e))
 
   const reports = await new sql.Request()
-    .query(`SELECT * FROM Locations`)
+    .query(
+      `SELECT * 
+       FROM Locations
+       ${username ? `WHERE Contact = '${username}'` : ''}`
+    )
     .then((res) => res.recordset)
     .catch((e) => console.log(e))
 

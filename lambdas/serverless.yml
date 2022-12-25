@@ -18,3 +18,12 @@ functions:
           path: get-reports
           integration: lambda
           cors: true
+          request:
+            parameters:
+              querystrings:
+                username: false
+            template:
+              application/json: |
+                { 
+                  "username" : "$input.params('username')"
+                }

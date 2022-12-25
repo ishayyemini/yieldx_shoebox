@@ -31,7 +31,10 @@ i18n
           },
           SignIn: {
             title: 'Sign In',
-            username: 'Username',
+            user: {
+              label: 'Username',
+              error: { required: 'Username is a required field' },
+            },
             buttonLogin: 'Login',
           },
         },

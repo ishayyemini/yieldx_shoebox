@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react'
-import { Grommet, Main, type ThemeType } from 'grommet'
+import { useCallback, useEffect, useState } from 'react'
+import { Box, Grommet, Main, type ThemeType } from 'grommet'
+import { css } from 'styled-components'
+import { Oval } from 'react-loader-spinner'
 
 import './data/i18n'
 import GlobalContext, { ContextType } from './data/GlobalContext'
 import API from './data/API'
-// import ChooseReport from './components/ChooseReport'
 import GlobalStyle from './components/app/GlobalStyle'
-import { css } from 'styled-components'
 import SignIn from './components/SignIn'
+import ChooseReport from './components/ChooseReport'
+
+type GlobalState = Omit<ContextType, 'updateContext'>
 
 const theme: ThemeType = {
   global: {
@@ -67,13 +70,45 @@ const theme: ThemeType = {
 }
 
 const App = () => {
-  const [globalState, setGlobalState] = useState({
-    report: undefined,
-  } as ContextType)
+  const [authStage, setAuthStage] = useState<
+    'checkingAuth' | 'loading' | 'loggedIn' | 'signIn'
+  >('checkingAuth')
+  const [globalState, setGlobalState] = useState<GlobalState>({ user: '' })
 
-  useEffect(() => {
-    API.configure(setGlobalState)
+  // Load user from API on login/start
+  const loadUser = useCallback<() => void>(async () => {
+    setAuthStage('loading')
+    await API.getReports()
+    setAuthStage('loggedIn')
   }, [])
+
+  // On start
+  useEffect(() => {
+    const user: string = localStorage.getItem('user') ?? ''
+    setGlobalState((old) => ({ ...old, user }))
+    API.configure({ user }, setGlobalState)
+
+    // Check if logged in
+    if (user) loadUser()
+    else setAuthStage('signIn')
+  }, [loadUser])
+
+  // After auth sign in
+  const signIn = useCallback<(user: string) => void>(
+    (user: string) => {
+      localStorage.setItem('user', user)
+      API.configure({ user })
+      loadUser()
+    },
+    [loadUser]
+  )
+
+  // const signOut = useCallback<() => void>(() => {
+  //   localStorage.removeItem('user')
+  //   localStorage.removeItem('settings')
+  //   setGlobalState({ user: '' })
+  //   setAuthStage('signIn')
+  // }, [])
 
   return (
     <Grommet theme={theme}>
@@ -82,8 +117,13 @@ const App = () => {
         value={{ ...globalState, updateContext: setGlobalState }}
       >
         <Main>
-          <SignIn />
-          {/*<ChooseReport />*/}
+          {authStage === 'loading' ? (
+            <Box align={'center'} justify={'center'} fill>
+              <Oval />
+            </Box>
+          ) : null}
+          {authStage === 'signIn' ? <SignIn signIn={signIn} /> : null}
+          {authStage === 'loggedIn' ? <ChooseReport /> : null}
         </Main>
       </GlobalContext.Provider>
     </Grommet>
