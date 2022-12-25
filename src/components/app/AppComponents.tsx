@@ -1,16 +1,23 @@
-import { FC } from 'react'
-import { Box } from 'grommet'
+import {
+  forwardRef,
+  ForwardRefExoticComponent,
+  PropsWithoutRef,
+  RefAttributes,
+} from 'react'
+import { Box, Text } from 'grommet'
 import styled from 'styled-components'
+import * as Icons from 'grommet-icons'
 
-const TextFieldWrapper = styled(Box)`
+const TextFieldWrapper = styled(Box)<{ error?: string }>`
   position: relative;
   background-color: inherit;
+  flex-direction: row;
 
   fieldset {
     position: absolute;
     padding: 0 9px;
     margin: 0;
-    border: 1px solid var(--outline);
+    border: 1px solid var(${(props) => (props.error ? '--error' : '--outline')});
     border-radius: 4px;
     bottom: 0;
     right: 0;
@@ -54,9 +61,17 @@ const TextFieldWrapper = styled(Box)`
   span {
     font-size: 0.9em;
     padding: 0 13px;
-    color: var(--on-surface-variant);
+    color: var(
+      ${(props) => (props.error ? '--error' : '--on-surface-variant')}
+    );
     transition: transform 0.15s ease-out, font-size 0.15s ease-out,
       background-color 0.2s ease-out, color 0.15s ease-out;
+  }
+
+  svg {
+    align-self: center;
+    position: absolute;
+    right: 10px;
   }
 
   input:-webkit-autofill {
@@ -73,7 +88,7 @@ const TextFieldWrapper = styled(Box)`
     background-color: inherit;
     font-size: 0.65em;
     padding: 0 13px;
-    color: var(--outline);
+    color: var(${(props) => (props.error ? '--error' : '--outline')});
     transform: translate(0, -21px);
   }
 
@@ -88,38 +103,55 @@ const TextFieldWrapper = styled(Box)`
     color: var(--on-surface);
   }
 
-  input:hover + label span {
-    color: var(--on-surface);
-  }
-
-  input:hover ~ fieldset {
-    border-color: var(--on-surface);
+  input:hover + label span,
+  input:hover ~ fieldset,
+  input:hover ~ svg {
+    color: var(
+      ${(props) => (props.error ? '--on-error-container' : '--on-surface')}
+    );
+    border-color: var(
+      ${(props) => (props.error ? '--on-error-container' : '--on-surface')}
+    );
+    stroke: var(--on-error-container);
   }
 
   input:focus + label span,
-  input:focus ~ fieldset {
-    border-color: var(--primary);
-    color: var(--primary);
+  input:focus ~ fieldset,
+  input:focus ~ svg {
+    border-color: var(${(props) => (props.error ? '--error' : '--primary')});
+    color: var(${(props) => (props.error ? '--error' : '--primary')});
+    stroke: var(--error);
     border-width: 2px;
   }
 `
 
 interface TextFieldProps extends Partial<JSX.IntrinsicElements['input']> {
   label: string
+  error?: string
 }
 
-const TextField: FC<TextFieldProps> = ({ label, name, ...args }) => {
+const TextField: ForwardRefExoticComponent<
+  PropsWithoutRef<TextFieldProps> & RefAttributes<HTMLInputElement>
+> = forwardRef(({ label, name, error, ...args }, ref) => {
   return (
-    <TextFieldWrapper>
-      <input name={name} id={name} {...args} placeholder={' '} />
-      <label htmlFor={name}>
-        <span>{label}</span>
-      </label>
-      <fieldset>
-        <legend>{label}</legend>
-      </fieldset>
-    </TextFieldWrapper>
+    <>
+      <TextFieldWrapper error={error}>
+        <input name={name} id={name} {...args} placeholder={' '} ref={ref} />
+        <label htmlFor={name}>
+          <span>{label}</span>
+        </label>
+        <fieldset>
+          <legend>{label}</legend>
+        </fieldset>
+        {error ? <Icons.StatusCritical color={'var(--error)'} /> : null}
+      </TextFieldWrapper>
+      {error ? (
+        <Text margin={'5px 13px'} size={'0.6em'} color={'var(--error)'}>
+          {error}
+        </Text>
+      ) : null}
+    </>
   )
-}
+})
 
 export { TextField }

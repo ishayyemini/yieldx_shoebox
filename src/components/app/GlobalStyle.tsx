@@ -190,6 +190,12 @@ const lightTheme = css`
   --on-surface-variant: var(--md-ref-palette-neutral-variant30);
   --outline: var(--md-ref-palette-neutral-variant50);
   --outline-variant: var(--md-ref-palette-neutral-variant80);
+
+  /* error */
+  --error: var(--md-ref-palette-error40);
+  --on-error: var(--md-ref-palette-error100);
+  --error-container: var(--md-ref-palette-error90);
+  --on-error-container: var(--md-ref-palette-error10);
 `
 
 // noinspection CssInvalidPropertyValue
