@@ -22,7 +22,7 @@ const router = createBrowserRouter([
         loader: chooseReportLoader,
       },
       {
-        path: 'status',
+        path: 'manage-devices',
         element: <div />,
         // loader: teamLoader,
       },

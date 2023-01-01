@@ -39,7 +39,11 @@ i18n
           },
           signOut: 'Sign Out',
           ChooseReport: {
+            title: 'Choose Report',
             empty: 'No reports found',
+          },
+          ManageDevices: {
+            title: 'Manage Devices',
           },
         },
       },
