@@ -50,6 +50,14 @@ const theme: ThemeType = {
       muted: 'var(--muted)',
     },
   },
+  dataTable: {
+    pinned: { header: { background: 'var(--background)' } },
+    body: {
+      extend: css`
+        background: var(--background);
+      `,
+    },
+  },
   card: {
     container: {
       background: 'var(--surface-variant)',
