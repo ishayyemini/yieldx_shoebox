@@ -1,12 +1,14 @@
 import {
+  FC,
   forwardRef,
   ForwardRefExoticComponent,
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import { Box, Text } from 'grommet'
+import { Box, Layer, Text } from 'grommet'
 import styled from 'styled-components'
 import * as Icons from 'grommet-icons'
+import { Oval } from 'react-loader-spinner'
 
 const TextFieldWrapper = styled(Box)<{ error?: string }>`
   position: relative;
@@ -154,4 +156,23 @@ const TextField: ForwardRefExoticComponent<
   )
 })
 
-export { TextField }
+const Loader: FC<{ full?: boolean }> = ({ full }) => {
+  const spinner = (
+    <Box align={'center'} justify={'center'} fill>
+      <Oval
+        secondaryColor={'var(--surface-variant)'}
+        color={'var(--primary)'}
+      />
+    </Box>
+  )
+
+  return full ? (
+    <Layer animation={'none'} full>
+      {spinner}
+    </Layer>
+  ) : (
+    spinner
+  )
+}
+
+export { TextField, Loader }

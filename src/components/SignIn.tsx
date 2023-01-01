@@ -1,12 +1,17 @@
-import { FC, useCallback } from 'react'
+import { useCallback } from 'react'
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useNavigate, useNavigation } from 'react-router-dom'
 
-import { TextField } from './app/AppComponents'
+import { Loader, TextField } from './app/AppComponents'
 
-const SignIn: FC<{ signIn: (user: string) => void }> = ({ signIn }) => {
+const SignIn = () => {
   const { t } = useTranslation(undefined, { keyPrefix: 'SignIn' })
+
+  const navigate = useNavigate()
+  const navigation = useNavigation()
+  console.log(navigation.state)
 
   const {
     register,
@@ -18,13 +23,16 @@ const SignIn: FC<{ signIn: (user: string) => void }> = ({ signIn }) => {
 
   const onSubmit = useCallback<(values: { user: string }) => void>(
     ({ user }) => {
-      signIn(user.toLowerCase())
+      localStorage.setItem('user', user.toLowerCase())
+      navigate('/')
     },
-    [signIn]
+    [navigate]
   )
 
   return (
     <Box justify={'center'} align={'center'} fill>
+      {navigation.state !== 'idle' && <Loader full />}
+
       <Card>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Box gap={'medium'}>
