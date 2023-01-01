@@ -37,6 +37,10 @@ i18n
             },
             buttonLogin: 'Login',
           },
+          signOut: 'Sign Out',
+          ChooseReport: {
+            empty: 'No reports found',
+          },
         },
       },
     },

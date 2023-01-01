@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { Box, DataTable } from 'grommet'
+import { Box, Card, DataTable } from 'grommet'
 import { useTranslation } from 'react-i18next'
 
 import { ReportType } from '../data/API'
@@ -10,47 +10,52 @@ const ChooseReport = () => {
 
   const { t } = useTranslation()
 
-  return (
-    <Box fill>
-      <DataTable
-        columns={[
-          ...[
-            'Customer',
-            'dateCreated',
-            'BoardID',
-            'DateToDB',
-            'Comment',
-            'Farm type',
-            'Location',
-            'House',
-            'Union No',
-            'Farm No',
-            'InHouseLoc',
-            'Age',
-            'Broiler family',
-            'Flock size',
-            'Mortality',
-            'Disease',
-          ].map((property) => ({
-            property,
-            header: t(`report.${property}`),
-            render: ['dateCreated', 'DateToDB'].includes(property)
-              ? (datum: ReportType) => (
-                  <>{new Date(datum.dateCreated).toLocaleString('en-GB')}</>
-                )
-              : undefined,
-          })),
-        ]}
-        data={reportList}
-        primaryKey={'UID'}
-        sort={{ property: 'dateCreated', direction: 'desc' }}
-        onClickRow={({ datum }) =>
-          updateContext((old) => ({ ...old, report: datum }))
-        }
-        rowProps={{ [report?.UID ?? '']: { background: 'black' } }}
-        sortable
-        pin
-      />
+  return reportList?.length ? (
+    <DataTable
+      columns={[
+        ...[
+          'Customer',
+          'dateCreated',
+          'BoardID',
+          'DateToDB',
+          'Comment',
+          'Farm type',
+          'Location',
+          'House',
+          'Union No',
+          'Farm No',
+          'InHouseLoc',
+          'Age',
+          'Broiler family',
+          'Flock size',
+          'Mortality',
+          'Disease',
+        ].map((property) => ({
+          property,
+          header: t(`report.${property}`),
+          render: ['dateCreated', 'DateToDB'].includes(property)
+            ? (datum: ReportType) => (
+                <>{new Date(datum.dateCreated).toLocaleString('en-GB')}</>
+              )
+            : undefined,
+        })),
+      ]}
+      data={reportList}
+      primaryKey={'UID'}
+      sort={{ property: 'dateCreated', direction: 'desc' }}
+      onClickRow={({ datum }) =>
+        updateContext((old) => ({ ...old, report: datum }))
+      }
+      rowProps={{ [report?.UID ?? '']: { background: 'black' } }}
+      sortable
+      pin
+    />
+  ) : (
+    <Box align={'center'} justify={'center'} fill>
+      <Card align={'center'} gap={'medium'}>
+        {t('ChooseReport.empty')}
+        {/*<Button label={t('signOut')} onClick={signOut} secondary />*/}
+      </Card>
     </Box>
   )
 }

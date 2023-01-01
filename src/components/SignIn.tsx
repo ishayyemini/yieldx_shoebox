@@ -25,7 +25,7 @@ const SignIn: FC<{ signIn: (user: string) => void }> = ({ signIn }) => {
 
   return (
     <Box justify={'center'} align={'center'} fill>
-      <Card pad={'medium'}>
+      <Card>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Box gap={'medium'}>
             <Text weight={'bold'} size={'large'} textAlign={'center'}>

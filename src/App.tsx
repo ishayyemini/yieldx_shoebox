@@ -9,6 +9,7 @@ import API from './data/API'
 import GlobalStyle from './components/app/GlobalStyle'
 import SignIn from './components/SignIn'
 import ChooseReport from './components/ChooseReport'
+import TopMenu from './components/TopMenu'
 
 type GlobalState = Omit<ContextType, 'updateContext'>
 
@@ -23,11 +24,10 @@ const theme: ThemeType = {
     },
   },
   card: {
-    body: { pad: 'small' },
     container: {
       background: 'var(--surface-variant)',
       margin: 'small',
-      pad: 'small',
+      pad: 'medium',
       round: 'small',
       elevation: 'none',
       extend: css`
@@ -103,12 +103,12 @@ const App = () => {
     [loadUser]
   )
 
-  // const signOut = useCallback<() => void>(() => {
-  //   localStorage.removeItem('user')
-  //   localStorage.removeItem('settings')
-  //   setGlobalState({ user: '' })
-  //   setAuthStage('signIn')
-  // }, [])
+  const signOut = useCallback<() => void>(() => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('settings')
+    setGlobalState({ user: '' })
+    setAuthStage('signIn')
+  }, [])
 
   return (
     <Grommet theme={theme}>
@@ -123,7 +123,14 @@ const App = () => {
             </Box>
           ) : null}
           {authStage === 'signIn' ? <SignIn signIn={signIn} /> : null}
-          {authStage === 'loggedIn' ? <ChooseReport /> : null}
+          {authStage === 'loggedIn' ? (
+            <>
+              <TopMenu signOut={signOut} />
+              <Box basis={'300px'} flex={'grow'} overflow={'auto'}>
+                <ChooseReport />
+              </Box>
+            </>
+          ) : null}
         </Main>
       </GlobalContext.Provider>
     </Grommet>

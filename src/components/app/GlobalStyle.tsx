@@ -214,17 +214,19 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     min-height: 100vh;
     min-height: -webkit-fill-available;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    width: 100vh;
+    width: -webkit-fill-available;
   }
   
   #root {
     display: flex;
     flex-grow: 1;
-    
+    max-width: 100%;
+
     > div {
       display: flex;
       flex-grow: 1;
+      max-width: 100%;
     }
   }
 `
