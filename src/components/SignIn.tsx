@@ -1,12 +1,16 @@
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useNavigation } from 'react-router-dom'
 
 import { Loader, TextField } from './app/AppComponents'
+import GlobalContext from '../data/GlobalContext'
+import API from '../data/API'
 
 const SignIn = () => {
+  const { updateContext } = useContext(GlobalContext)
+
   const { t } = useTranslation(undefined, { keyPrefix: 'SignIn' })
 
   const navigate = useNavigate()
@@ -23,10 +27,13 @@ const SignIn = () => {
 
   const onSubmit = useCallback<(values: { user: string }) => void>(
     ({ user }) => {
-      localStorage.setItem('user', user.toLowerCase())
+      user = user.toLowerCase()
+      localStorage.setItem('user', user)
+      updateContext((oldCtx) => ({ ...oldCtx, user }))
+      API.configure({ user })
       navigate('/')
     },
-    [navigate]
+    [navigate, updateContext]
   )
 
   return (

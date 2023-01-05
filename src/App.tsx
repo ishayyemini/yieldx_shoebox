@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Box, Main } from 'grommet'
-import {
-  Outlet,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useNavigation,
-} from 'react-router-dom'
+import { Outlet, redirect, useLoaderData, useNavigate } from 'react-router-dom'
 
 import './data/i18n'
 import GlobalContext, { ContextType } from './data/GlobalContext'
@@ -22,17 +16,17 @@ export const appLoader = () => {
 }
 
 const App = () => {
-  const { user } = useLoaderData() as { user: string }
+  const { user: initUser } = useLoaderData() as { user: string }
 
-  const [globalState, setGlobalState] = useState<GlobalState>({ user })
+  const [globalState, setGlobalState] = useState<GlobalState>({
+    user: initUser,
+  })
 
   const navigate = useNavigate()
-  const navigation = useNavigation()
-  console.log(navigation.state)
 
   useEffect(() => {
-    API.configure({ user }, setGlobalState)
-  }, [user])
+    API.configure({ user: globalState.user }, setGlobalState)
+  }, [globalState.user])
 
   const signOut = useCallback<() => void>(() => {
     localStorage.removeItem('user')
@@ -46,7 +40,7 @@ const App = () => {
       value={{ ...globalState, updateContext: setGlobalState }}
     >
       <Main>
-        {user ? (
+        {globalState.user ? (
           <>
             <TopMenu signOut={signOut} />
             <Box basis={'300px'} flex={'grow'} overflow={'auto'}>

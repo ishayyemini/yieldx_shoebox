@@ -16,7 +16,7 @@ const get_reports = async ({ username }) => {
     .query(
       `SELECT * 
        FROM Locations
-       ${username ? `WHERE Contact = '${username}'` : ''}`
+       ${username ? `WHERE Customer = '${username}'` : ''}`
     )
     .then((res) => res.recordset)
     .catch((e) => console.log(e))
