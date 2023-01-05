@@ -1,39 +1,29 @@
-import { useCallback, useContext } from 'react'
+import { useCallback } from 'react'
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useNavigation } from 'react-router-dom'
 
 import { Loader, TextField } from './app/AppComponents'
-import GlobalContext from '../data/GlobalContext'
 import API from '../data/API'
 
 const SignIn = () => {
-  const { updateContext } = useContext(GlobalContext)
-
   const { t } = useTranslation(undefined, { keyPrefix: 'SignIn' })
 
   const navigate = useNavigate()
   const navigation = useNavigation()
-  console.log(navigation.state)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    defaultValues: { user: '' },
-  })
+  } = useForm({ defaultValues: { user: '' } })
 
   const onSubmit = useCallback<(values: { user: string }) => void>(
     ({ user }) => {
-      user = user.toLowerCase()
-      localStorage.setItem('user', user)
-      updateContext((oldCtx) => ({ ...oldCtx, user }))
-      API.configure({ user })
-      navigate('/')
+      API.signIn(user).then(() => navigate('/'))
     },
-    [navigate, updateContext]
+    [navigate]
   )
 
   return (

@@ -51,7 +51,12 @@ const TopMenu: FC<{ signOut: () => void }> = ({ signOut }) => {
       <NavButton
         icon={<Icons.List />}
         label={t('ChooseReport.title')}
-        to={'/'}
+        to={'/reports'}
+      />
+      <NavButton
+        icon={<Icons.StatusInfo />}
+        label={t('DevicesInfo.title')}
+        to={'/devices-info'}
       />
       <NavButton
         icon={<Icons.SettingsOption />}

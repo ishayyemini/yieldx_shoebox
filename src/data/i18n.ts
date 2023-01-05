@@ -42,6 +42,9 @@ i18n
             title: 'Choose Report',
             empty: 'No reports found',
           },
+          DevicesInfo: {
+            title: 'Devices Info',
+          },
           ManageDevices: {
             title: 'Manage Devices',
           },

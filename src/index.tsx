@@ -17,14 +17,17 @@ const router = createBrowserRouter([
     loader: appLoader,
     children: [
       {
-        path: '',
+        path: 'reports',
         element: <ChooseReport />,
         loader: chooseReportLoader,
       },
       {
         path: 'manage-devices',
         element: <div />,
-        // loader: teamLoader,
+      },
+      {
+        path: 'devices-info',
+        element: <div />,
       },
     ],
   },
@@ -34,7 +37,6 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <SignIn />,
-        // loader: () => console.log('ghr'),
       },
     ],
   },

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Box, Main } from 'grommet'
-import { Outlet, redirect, useLoaderData, useNavigate } from 'react-router-dom'
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom'
 
 import './data/i18n'
 import GlobalContext, { ContextType } from './data/GlobalContext'
@@ -10,29 +16,30 @@ import TopMenu from './components/TopMenu'
 type GlobalState = Omit<ContextType, 'updateContext'>
 
 export const appLoader = () => {
-  const user = localStorage.getItem('user')
-  if (!user) throw redirect('/login')
-  return { user }
+  // Check if user is signed in, auth-wise
+  return API.getCurrentUser().catch(() => {
+    throw redirect('/login')
+  })
 }
 
 const App = () => {
-  const { user: initUser } = useLoaderData() as { user: string }
+  const user = useLoaderData() as string
 
-  const [globalState, setGlobalState] = useState<GlobalState>({
-    user: initUser,
-  })
+  const [globalState, setGlobalState] = useState<GlobalState>({ user })
 
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   useEffect(() => {
-    API.configure({ user: globalState.user }, setGlobalState)
-  }, [globalState.user])
+    API.configure(setGlobalState)
+  }, [])
+
+  useEffect(() => {
+    if (pathname === '/') navigate('reports')
+  }, [navigate, pathname])
 
   const signOut = useCallback<() => void>(() => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('settings')
-    setGlobalState({ user: '' })
-    navigate('/login')
+    API.signOut().then(() => navigate('/login'))
   }, [navigate])
 
   return (

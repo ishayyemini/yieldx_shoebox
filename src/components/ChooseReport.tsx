@@ -1,7 +1,7 @@
 import { Suspense, useContext } from 'react'
 import { Box, Card, DataTable } from 'grommet'
 import { useTranslation } from 'react-i18next'
-import { Await, defer, useLoaderData, useNavigation } from 'react-router-dom'
+import { Await, defer, useLoaderData } from 'react-router-dom'
 
 import API, { ReportType } from '../data/API'
 import GlobalContext from '../data/GlobalContext'
@@ -16,9 +16,6 @@ const ChooseReport = () => {
   const { report, updateContext } = useContext(GlobalContext)
 
   const { t } = useTranslation()
-
-  const navigation = useNavigation()
-  console.log(navigation.state)
 
   return (
     <Suspense fallback={<Loader />}>

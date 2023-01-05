@@ -31,12 +31,28 @@ class APIClass {
   _config: { user: string } = { user: '' }
   _setGlobalState: UpdateContextType = () => null
 
-  configure(
-    { user }: { user: string },
-    setGlobalState?: UpdateContextType
-  ): void {
-    this._config = { user }
+  configure(setGlobalState?: UpdateContextType) {
     if (setGlobalState) this._setGlobalState = setGlobalState
+  }
+
+  async getCurrentUser(): Promise<string> {
+    const user = localStorage.getItem('user')
+    if (!user) throw new Error('No authenticated user')
+    this._config.user = user
+    return user
+  }
+
+  async signIn(user: string): Promise<string> {
+    user = user.toLowerCase()
+    localStorage.setItem('user', user)
+    this._config.user = user
+    return user
+  }
+
+  async signOut(): Promise<void> {
+    localStorage.removeItem('user')
+    localStorage.removeItem('settings')
+    this._config.user = ''
   }
 
   async getReports(): Promise<ReportType[]> {
