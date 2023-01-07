@@ -27,3 +27,21 @@ functions:
                 { 
                   "username" : "$input.params('username')"
                 }
+
+  get_devices:
+    handler: get_devices.default
+    events:
+      - http:
+          method: get
+          path: get-devices
+          integration: lambda
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                username: false
+            template:
+              application/json: |
+                { 
+                  "username" : "$input.params('username')"
+                }
