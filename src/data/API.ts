@@ -27,6 +27,20 @@ export type ReportType = {
   Customer?: string
 }
 
+export type DeviceType = {
+  UID: string
+  Customer: string
+  Location: string
+  House: string
+  InHouseLoc: string
+  FW: string
+  Adapters: { [key: string]: string }
+  Online: boolean
+  Cycle?: number
+  Stage?: number
+  DateUpdated?: Date
+}
+
 class APIClass {
   _config: { user: string } = { user: '' }
   _setGlobalState: UpdateContextType = () => null
@@ -69,6 +83,14 @@ class APIClass {
         }))
         return res
       })
+  }
+
+  async getDevices(): Promise<DeviceType[]> {
+    const username = this._config.user === 'all' ? '' : this._config.user
+    return await fetch(
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-devices?' +
+        queryString.stringify({ username })
+    ).then((res) => res.json())
   }
 }
 

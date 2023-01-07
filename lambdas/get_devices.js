@@ -77,7 +77,7 @@ const get_devices = async ({ username }) => {
       if (p.Location) tmpMessages[UID] = p
     })
   }).then((res) =>
-    res.filter((item) => !username || item.Customer === username)
+    res.filter((item) => !username || item.Customer.toLowerCase() === username)
   )
 
   console.log(`Done, fetched ${messages.length} devices`)
