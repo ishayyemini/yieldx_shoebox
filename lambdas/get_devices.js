@@ -30,12 +30,23 @@ const get_devices = async ({ username }) => {
           resolve(tmpMessages)
         }, 100)
       }
-      tmpMessages.push(payload.toString())
       console.log('Received Message:', topic, payload.toString())
+
+      const p = {
+        UID: topic.split('/').pop(),
+        ...Object.fromEntries(
+          payload
+            .toString()
+            .split(' ')
+            .map((item) => item.split(':'))
+            .filter(([key]) => ['Cust', 'Loc'].includes(key))
+        ),
+      }
+      if (!username || p.Cust === username) tmpMessages.push(p)
     })
   })
 
-  console.log(messages)
+  console.log(`Done, fetched ${messages.length} devices`)
 
   return messages
 }
