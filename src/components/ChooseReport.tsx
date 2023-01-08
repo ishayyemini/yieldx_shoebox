@@ -13,18 +13,15 @@ export const chooseReportLoader = () => {
 
 const ChooseReport = () => {
   const data = useLoaderData() as { reportList: ReportType[] }
-  const { report, updateContext } = useContext(GlobalContext)
+  const { report, reportList, updateContext } = useContext(GlobalContext)
 
   const { t } = useTranslation()
 
   return (
     <Suspense fallback={<Loader />}>
-      <Await
-        resolve={data.reportList}
-        errorElement={<p>Error loading package location!</p>}
-      >
-        {(reportList) =>
-          reportList?.length ? (
+      <Await resolve={reportList?.length ? reportList : data.reportList}>
+        {(rp: Awaited<ReportType[]>) =>
+          rp.length ? (
             <DataTable
               columns={[
                 ...[
@@ -56,7 +53,7 @@ const ChooseReport = () => {
                     : undefined,
                 })),
               ]}
-              data={reportList}
+              data={rp}
               primaryKey={'UID'}
               sort={{ property: 'dateCreated', direction: 'desc' }}
               onClickRow={({ datum }) =>
@@ -70,7 +67,6 @@ const ChooseReport = () => {
             <Box align={'center'} justify={'center'} fill>
               <Card align={'center'} gap={'medium'}>
                 {t('ChooseReport.empty')}
-                {/*<Button label={t('signOut')} onClick={signOut} secondary />*/}
               </Card>
             </Box>
           )

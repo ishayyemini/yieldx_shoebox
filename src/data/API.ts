@@ -79,9 +79,9 @@ class APIClass {
       .then((res) => {
         this._setGlobalState((oldCtx) => ({
           ...oldCtx,
-          reportList: res.slice().reverse() ?? [],
+          reportList: res ?? [],
         }))
-        return res
+        return res ?? []
       })
   }
 
