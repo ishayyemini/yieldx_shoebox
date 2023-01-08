@@ -57,7 +57,12 @@ const theme: ThemeType = {
     pinned: { header: { background: 'var(--background)' } },
     body: {
       extend: css`
-        background: var(--background);
+        tr:nth-of-type(odd) {
+          background: var(--md-ref-palette-neutral95);
+        }
+        tr:nth-of-type(even) {
+          background: var(--md-ref-palette-neutral98);
+        }
       `,
     },
   },
