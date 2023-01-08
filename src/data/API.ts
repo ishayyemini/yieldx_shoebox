@@ -38,7 +38,7 @@ export type DeviceType = {
   Online: boolean
   Cycle?: number
   Stage?: number
-  DateUpdated?: Date
+  DateUpdated?: string
 }
 
 class APIClass {
@@ -77,10 +77,7 @@ class APIClass {
     )
       .then((res) => res.json())
       .then((res) => {
-        this._setGlobalState((oldCtx) => ({
-          ...oldCtx,
-          reportList: res ?? [],
-        }))
+        this._setGlobalState((oldCtx) => ({ ...oldCtx, reportList: res ?? [] }))
         return res ?? []
       })
   }
@@ -90,7 +87,12 @@ class APIClass {
     return await fetch(
       'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-devices?' +
         queryString.stringify({ username })
-    ).then((res) => res.json())
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        this._setGlobalState((oldCtx) => ({ ...oldCtx, deviceList: res ?? [] }))
+        return res ?? []
+      })
   }
 }
 

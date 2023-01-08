@@ -9,7 +9,7 @@ import ChooseReport, { chooseReportLoader } from './components/ChooseReport'
 import GlobalStyle from './components/app/GlobalStyle'
 import SignIn from './components/SignIn'
 import AuthLayout from './components/AuthLayout'
-import DevicesInfo from './components/DevicesInfo'
+import DevicesInfo, { devicesInfoLoader } from './components/DevicesInfo'
 
 const router = createBrowserRouter([
   {
@@ -25,10 +25,17 @@ const router = createBrowserRouter([
       {
         path: 'manage-devices',
         element: <div />,
+        children: [
+          {
+            path: ':UID',
+            element: <div />,
+          },
+        ],
       },
       {
         path: 'devices-info',
         element: <DevicesInfo />,
+        loader: devicesInfoLoader,
       },
     ],
   },

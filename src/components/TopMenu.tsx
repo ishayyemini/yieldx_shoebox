@@ -33,8 +33,7 @@ const NavButton: FC<NavButtonProps> = (props) => {
     <StyledNavButton
       {...props}
       onClick={() => navigate(props.to)}
-      current={props.to === pathname}
-      // secondary
+      current={pathname.startsWith(props.to)}
     />
   )
 }

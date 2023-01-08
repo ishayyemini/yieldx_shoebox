@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import type { ReportType } from './API'
+import type { DeviceType, ReportType } from './API'
 
 export type UpdateContextType = (
   newCtx:
@@ -14,6 +14,7 @@ export type ContextType = {
   user: string
   report?: ReportType
   reportList?: ReportType[]
+  deviceList?: DeviceType[]
   updateContext: UpdateContextType
 }
 

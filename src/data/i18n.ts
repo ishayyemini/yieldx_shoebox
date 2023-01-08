@@ -29,6 +29,18 @@ i18n
             Mortality: 'Mortality',
             Disease: 'Disease',
           },
+          device: {
+            Customer: 'Customer',
+            DateUpdated: 'Date Updated',
+            Location: 'Location',
+            House: 'House',
+            InHouseLoc: 'InHouseLoc',
+            FW: 'Firmware Version',
+            Adapters: 'Adapters',
+            Online: 'Online',
+            Cycle: 'Cycle',
+            Stage: 'Stage',
+          },
           SignIn: {
             title: 'Sign In',
             user: {
@@ -44,6 +56,7 @@ i18n
           },
           DevicesInfo: {
             title: 'Devices Info',
+            empty: 'No devices found',
           },
           ManageDevices: {
             title: 'Manage Devices',
