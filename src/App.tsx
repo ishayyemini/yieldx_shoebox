@@ -1,79 +1,89 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Box, Main } from 'grommet'
-import {
-  Outlet,
-  redirect,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom'
+import React from 'react'
+import { Grommet, ThemeType } from 'grommet'
+import { Outlet } from 'react-router-dom'
+import { css } from 'styled-components'
 
 import './data/i18n'
-import GlobalContext, { ContextType } from './data/GlobalContext'
-import API from './data/API'
-import TopMenu from './components/TopMenu'
+import GlobalStyle from './components/app/GlobalStyle'
 
-type GlobalState = Omit<ContextType, 'updateContext'>
-
-export const appLoader = () => {
-  // Check if user is signed in, auth-wise
-  return API.getCurrentUser().catch(() => {
-    throw redirect('/login')
-  })
+const theme: ThemeType = {
+  global: {
+    font: { family: 'Lato, sans-serif' },
+    colors: {
+      brand: 'var(--main)',
+      'accent-1': 'var(--accent1)',
+      'accent-2': 'var(--accent2)',
+      muted: 'var(--muted)',
+    },
+  },
+  dataTable: {
+    pinned: { header: { background: 'var(--background)' } },
+    body: {
+      extend: css`
+        tr:nth-of-type(odd) {
+          background: var(--md-ref-palette-neutral95);
+        }
+        tr:nth-of-type(even) {
+          background: var(--md-ref-palette-neutral98);
+        }
+      `,
+    },
+  },
+  card: {
+    container: {
+      background: 'var(--surface-variant)',
+      margin: 'small',
+      pad: 'medium',
+      round: 'small',
+      elevation: 'none',
+      extend: css`
+        color: var(--on-surface-variant);
+      `,
+    },
+  },
+  layer: {
+    background: 'var(--background)',
+  },
+  button: {
+    primary: {
+      background: 'var(--primary)',
+      font: { weight: 400 },
+      extend: css`
+        color: var(--on-primary);
+        transition: opacity 0.2s;
+      `,
+    },
+    default: {
+      background: 'var(--secondary-container)',
+      font: { weight: 400 },
+      extend: css`
+        color: var(--on-secondary-container);
+        transition: opacity 0.2s;
+      `,
+    },
+    secondary: {
+      border: { color: 'var(--primary)', width: '1px' },
+      font: { weight: 400 },
+      extend: css`
+        color: var(--primary);
+        transition: opacity 0.2s;
+      `,
+    },
+    hover: {
+      extend: css`
+        opacity: 0.8;
+        transition: opacity 0.1s;
+      `,
+    },
+  },
 }
 
 const App = () => {
-  const user = useLoaderData() as string
-
-  const [globalState, setGlobalState] = useState<GlobalState>({ user })
-
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    API.configure(setGlobalState)
-  }, [])
-
-  useEffect(() => {
-    if (pathname === '/') navigate('reports')
-  }, [navigate, pathname])
-
-  const signOut = useCallback<() => void>(() => {
-    API.signOut().then(() => navigate('/login'))
-  }, [navigate])
-
   return (
-    <GlobalContext.Provider
-      value={{ ...globalState, updateContext: setGlobalState }}
-    >
-      <Main>
-        {globalState.user ? (
-          <>
-            <TopMenu signOut={signOut} />
-            <Box basis={'300px'} flex={'grow'} overflow={'auto'}>
-              <Outlet />
-            </Box>
-          </>
-        ) : (
-          <Outlet />
-        )}
-
-        {/*{authStage === 'loading' ? (*/}
-        {/*  <Box align={'center'} justify={'center'} fill>*/}
-        {/*    <Oval />*/}
-        {/*  </Box>*/}
-        {/*) : null}*/}
-        {/*{authStage === 'signIn' ? <SignIn signIn={signIn} /> : null}*/}
-        {/*{authStage === 'loggedIn' ? (*/}
-        {/*  <>*/}
-        {/*    <TopMenu signOut={signOut} />*/}
-        {/*    <Box basis={'300px'} flex={'grow'} overflow={'auto'}>*/}
-        {/*      <Outlet />*/}
-        {/*    </Box>*/}
-        {/*  </>*/}
-        {/*) : null}*/}
-      </Main>
-    </GlobalContext.Provider>
+    <Grommet theme={theme}>
+      <GlobalStyle />
+      <Outlet />
+    </Grommet>
   )
 }
 

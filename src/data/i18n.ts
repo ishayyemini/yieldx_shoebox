@@ -51,15 +51,12 @@ i18n
           },
           signOut: 'Sign Out',
           ChooseReport: {
-            title: 'Choose Report',
+            title: 'Reports',
             empty: 'No reports found',
           },
           DevicesInfo: {
-            title: 'Devices Info',
+            title: 'Devices',
             empty: 'No devices found',
-          },
-          ManageDevices: {
-            title: 'Manage Devices',
           },
         },
       },

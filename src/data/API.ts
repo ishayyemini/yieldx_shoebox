@@ -57,6 +57,7 @@ class APIClass {
   }
 
   async signIn(user: string): Promise<string> {
+    await new Promise((r) => setTimeout(r, 1000))
     user = user.toLowerCase()
     localStorage.setItem('user', user)
     this._config.user = user

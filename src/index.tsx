@@ -1,133 +1,75 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { Grommet, ThemeType } from 'grommet'
-import { css } from 'styled-components'
+import { createBrowserRouter, redirect, RouterProvider } from 'react-router-dom'
 
-import App, { appLoader } from './App'
-import ChooseReport, { chooseReportLoader } from './components/ChooseReport'
-import GlobalStyle from './components/app/GlobalStyle'
-import SignIn from './components/SignIn'
+import App from './App'
+import ChooseReport from './components/reports/ChooseReport'
+import SignIn from './components/auth/SignIn'
 import AuthLayout from './components/AuthLayout'
-import DevicesInfo, { devicesInfoLoader } from './components/DevicesInfo'
+import ReportView from './components/reports/ReportView'
+import Reports, { reportsLoader } from './components/reports/Reports'
+import MainLayout, { mainLoader } from './components/MainLayout'
+import Devices, { devicesLoader } from './components/devices/Devices'
+import DevicesInfo from './components/devices/DevicesInfo'
+import API from './data/API'
 
 const router = createBrowserRouter([
   {
-    path: '/',
     element: <App />,
-    loader: appLoader,
     children: [
       {
-        path: 'reports',
-        element: <ChooseReport />,
-        loader: chooseReportLoader,
-      },
-      {
-        path: 'manage-devices',
-        element: <div />,
+        path: '/',
+        element: <MainLayout />,
+        loader: mainLoader,
         children: [
           {
-            path: ':UID',
-            element: <div />,
+            path: 'reports',
+            element: <Reports />,
+            loader: reportsLoader,
+            children: [
+              { index: true, element: <ChooseReport /> },
+              { path: ':UID', element: <ReportView /> },
+            ],
+          },
+          {
+            path: 'devices',
+            element: <Devices />,
+            loader: devicesLoader,
+            children: [
+              { index: true, element: <DevicesInfo /> },
+              {
+                path: ':UID',
+                element: <div />,
+                children: [{ path: 'update', element: <div /> }],
+              },
+            ],
           },
         ],
       },
       {
-        path: 'devices-info',
-        element: <DevicesInfo />,
-        loader: devicesInfoLoader,
-      },
-    ],
-  },
-  {
-    element: <AuthLayout />,
-    children: [
-      {
-        path: 'login',
-        element: <SignIn />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: 'login',
+            element: <SignIn />,
+            action: async (args) => {
+              const user = await args.request
+                .formData()
+                .then((res) => res.get('user'))
+              if (typeof user === 'string')
+                return await API.signIn(user).then(() => redirect('/'))
+              else return null
+            },
+          },
+        ],
       },
     ],
   },
 ])
 
-const theme: ThemeType = {
-  global: {
-    font: { family: 'Lato, sans-serif' },
-    colors: {
-      brand: 'var(--main)',
-      'accent-1': 'var(--accent1)',
-      'accent-2': 'var(--accent2)',
-      muted: 'var(--muted)',
-    },
-  },
-  dataTable: {
-    pinned: { header: { background: 'var(--background)' } },
-    body: {
-      extend: css`
-        tr:nth-of-type(odd) {
-          background: var(--md-ref-palette-neutral95);
-        }
-        tr:nth-of-type(even) {
-          background: var(--md-ref-palette-neutral98);
-        }
-      `,
-    },
-  },
-  card: {
-    container: {
-      background: 'var(--surface-variant)',
-      margin: 'small',
-      pad: 'medium',
-      round: 'small',
-      elevation: 'none',
-      extend: css`
-        color: var(--on-surface-variant);
-      `,
-    },
-  },
-  layer: {
-    background: 'var(--background)',
-  },
-  button: {
-    primary: {
-      background: 'var(--primary)',
-      font: { weight: 400 },
-      extend: css`
-        color: var(--on-primary);
-        transition: opacity 0.2s;
-      `,
-    },
-    default: {
-      background: 'var(--secondary-container)',
-      font: { weight: 400 },
-      extend: css`
-        color: var(--on-secondary-container);
-        transition: opacity 0.2s;
-      `,
-    },
-    secondary: {
-      border: { color: 'var(--primary)', width: '1px' },
-      font: { weight: 400 },
-      extend: css`
-        color: var(--primary);
-        transition: opacity 0.2s;
-      `,
-    },
-    hover: {
-      extend: css`
-        opacity: 0.8;
-        transition: opacity 0.1s;
-      `,
-    },
-  },
-}
-
 const root = ReactDOM.createRoot(document.getElementById('root') as Element)
 root.render(
   <React.StrictMode>
-    <Grommet theme={theme}>
-      <GlobalStyle />
-      <RouterProvider router={router} />
-    </Grommet>
+    <RouterProvider router={router} />
   </React.StrictMode>
 )

@@ -1,16 +1,14 @@
-import { useCallback } from 'react'
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useNavigation } from 'react-router-dom'
+import { useNavigation, useSubmit } from 'react-router-dom'
 
-import { Loader, TextField } from './app/AppComponents'
-import API from '../data/API'
+import { Loader, TextField } from '../app/AppComponents'
+import { useCallback } from 'react'
 
 const SignIn = () => {
   const { t } = useTranslation(undefined, { keyPrefix: 'SignIn' })
 
-  const navigate = useNavigate()
   const navigation = useNavigation()
 
   const {
@@ -19,11 +17,13 @@ const SignIn = () => {
     formState: { errors },
   } = useForm({ defaultValues: { user: '' } })
 
+  const submit = useSubmit()
+
   const onSubmit = useCallback<(values: { user: string }) => void>(
     ({ user }) => {
-      API.signIn(user).then(() => navigate('/'))
+      submit({ user }, { method: 'post' })
     },
-    [navigate]
+    [submit]
   )
 
   return (

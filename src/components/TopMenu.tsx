@@ -48,19 +48,14 @@ const TopMenu: FC<{ signOut: () => void }> = ({ signOut }) => {
       basis={'60px'}
     >
       <NavButton
-        icon={<Icons.List />}
+        icon={<Icons.LineChart />}
         label={t('ChooseReport.title')}
         to={'/reports'}
       />
       <NavButton
-        icon={<Icons.StatusInfo />}
+        icon={<Icons.Device />}
         label={t('DevicesInfo.title')}
-        to={'/devices-info'}
-      />
-      <NavButton
-        icon={<Icons.SettingsOption />}
-        label={t('ManageDevices.title')}
-        to={'/manage-devices'}
+        to={'/devices'}
       />
       <Button label={t('signOut')} onClick={signOut} secondary />
     </Card>
