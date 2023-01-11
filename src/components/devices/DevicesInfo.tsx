@@ -35,7 +35,7 @@ const DevicesInfo = () => {
           property: 'FW',
           header: t('device.FW'),
           render: (datum) => (
-            <Link to={`/devices/${datum.UID}/update`}>{datum.FW}</Link>
+            <Link to={`/devices/${datum.MAC}/update`}>{datum.FW}</Link>
           ),
         },
         {
@@ -64,7 +64,7 @@ const DevicesInfo = () => {
         })),
       ]}
       data={deviceList}
-      primaryKey={'UID'}
+      primaryKey={'MAC'}
       sort={{ property: 'DateUpdated', direction: 'desc' }}
       sortable
       pin

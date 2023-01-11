@@ -28,7 +28,7 @@ export type ReportType = {
 }
 
 export type DeviceType = {
-  UID: string
+  MAC: string
   Customer: string
   Location: string
   House: string

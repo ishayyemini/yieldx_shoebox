@@ -35,9 +35,9 @@ const get_devices = async ({ username }) => {
       }
       console.log('Received Message:', topic, payload.toString())
 
-      const UID = topic.split('/').pop()
+      const MAC = topic.split('/').pop()
       const p = {
-        UID,
+        MAC,
         Customer: '',
         Location: '',
         House: '',
@@ -48,7 +48,7 @@ const get_devices = async ({ username }) => {
         Cycle: null,
         Stage: null,
         DateUpdated: null,
-        ...(tmpMessages[UID] || {}),
+        ...(tmpMessages[MAC] || {}),
       }
       const ps = payload.toString()
       if (topic.startsWith('cfg/')) {
@@ -74,7 +74,7 @@ const get_devices = async ({ username }) => {
         const time = ps.match(/(?<=GMT:).+?(?=: )/)?.[0]
         if (time) p.DateUpdated = new Date(time + '+00:00')
       }
-      if (p.Location) tmpMessages[UID] = p
+      if (p.Location) tmpMessages[MAC] = p
     })
   }).then((res) =>
     res.filter((item) => !username || item.Customer.toLowerCase() === username)

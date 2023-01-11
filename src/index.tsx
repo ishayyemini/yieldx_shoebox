@@ -37,7 +37,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <DevicesInfo /> },
               {
-                path: ':UID',
+                path: ':MAC',
                 element: <div />,
                 children: [{ path: 'update', element: <div /> }],
               },
