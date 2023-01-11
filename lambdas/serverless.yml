@@ -45,3 +45,24 @@ functions:
                 { 
                   "username" : "$input.params('username')"
                 }
+
+  get_last_sensors:
+    handler: get_last_sensors.default
+    events:
+      - http:
+          method: get
+          path: get-last-sensors
+          integration: lambda
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                MAC: true
+            template:
+              application/json: |
+                { 
+                  "MAC" : "$input.params('MAC')"
+                }
+                
+    
+
