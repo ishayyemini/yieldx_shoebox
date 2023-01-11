@@ -11,6 +11,7 @@ import Reports, { reportsLoader } from './components/reports/Reports'
 import MainLayout, { mainLoader } from './components/MainLayout'
 import Devices, { devicesLoader } from './components/devices/Devices'
 import DevicesInfo from './components/devices/DevicesInfo'
+import DeviceView from './components/devices/DeviceView'
 
 const router = createBrowserRouter([
   {
@@ -31,15 +32,19 @@ const router = createBrowserRouter([
             ],
           },
           {
-            path: 'devices',
             element: <Devices />,
             loader: devicesLoader,
             children: [
-              { index: true, element: <DevicesInfo /> },
               {
-                path: ':MAC',
-                element: <div />,
-                children: [{ path: 'update', element: <div /> }],
+                path: 'devices',
+                element: <DevicesInfo />,
+                children: [
+                  {
+                    path: ':MAC',
+                    element: <DeviceView />,
+                    // children: [{ path: 'update', element: <div /> }],
+                  },
+                ],
               },
             ],
           },
@@ -49,7 +54,7 @@ const router = createBrowserRouter([
         element: <AuthLayout />,
         children: [
           {
-            path: 'login',
+            path: '/login',
             element: <SignIn />,
             action: signInAction,
           },

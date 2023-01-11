@@ -14,6 +14,7 @@ const theme: ThemeType = {
       'accent-1': 'var(--accent1)',
       'accent-2': 'var(--accent2)',
       muted: 'var(--muted)',
+      border: 'var(--outline-variant)',
     },
   },
   dataTable: {
