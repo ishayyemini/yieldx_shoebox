@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Box, Main } from 'grommet'
 import {
+  LoaderFunction,
   Outlet,
   redirect,
   useLoaderData,
@@ -14,10 +15,10 @@ import TopMenu from './TopMenu'
 
 type GlobalState = Omit<ContextType, 'updateContext'>
 
-export const mainLoader = async () => {
-  // Check if user is signed in, auth-wise
+export const mainLoader: LoaderFunction = async ({ request }) => {
+  const pathname = new URL(request.url).pathname.slice(1)
   return API.getCurrentUser().catch(() => {
-    throw redirect('/login')
+    throw redirect(`/login${pathname ? `?next=${pathname}` : ''}`)
   })
 }
 

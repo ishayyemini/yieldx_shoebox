@@ -1,12 +1,30 @@
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useNavigation, useSubmit } from 'react-router-dom'
+import {
+  ActionFunction,
+  redirect,
+  useNavigation,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 
 import { Loader, TextField } from '../app/AppComponents'
 import { useCallback } from 'react'
+import API from '../../data/API'
+
+export const signInAction: ActionFunction = async ({ request }) => {
+  const { user, next } = Object.fromEntries(
+    (await request.formData()).entries()
+  ) as { user?: string; next?: string }
+  console.log(next)
+  if (user) return await API.signIn(user).then(() => redirect('/' + next))
+  else return null
+}
 
 const SignIn = () => {
+  const [params] = useSearchParams()
+
   const { t } = useTranslation(undefined, { keyPrefix: 'SignIn' })
 
   const navigation = useNavigation()
@@ -21,9 +39,10 @@ const SignIn = () => {
 
   const onSubmit = useCallback<(values: { user: string }) => void>(
     ({ user }) => {
-      submit({ user }, { method: 'post' })
+      const next = params.get('next') ?? ''
+      submit({ user, next }, { method: 'post' })
     },
-    [submit]
+    [params, submit]
   )
 
   return (

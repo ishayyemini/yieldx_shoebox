@@ -1,17 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, redirect, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import App from './App'
 import ChooseReport from './components/reports/ChooseReport'
-import SignIn from './components/auth/SignIn'
+import SignIn, { signInAction } from './components/auth/SignIn'
 import AuthLayout from './components/AuthLayout'
 import ReportView from './components/reports/ReportView'
 import Reports, { reportsLoader } from './components/reports/Reports'
 import MainLayout, { mainLoader } from './components/MainLayout'
 import Devices, { devicesLoader } from './components/devices/Devices'
 import DevicesInfo from './components/devices/DevicesInfo'
-import API from './data/API'
 
 const router = createBrowserRouter([
   {
@@ -52,14 +51,7 @@ const router = createBrowserRouter([
           {
             path: 'login',
             element: <SignIn />,
-            action: async (args) => {
-              const user = await args.request
-                .formData()
-                .then((res) => res.get('user'))
-              if (typeof user === 'string')
-                return await API.signIn(user).then(() => redirect('/'))
-              else return null
-            },
+            action: signInAction,
           },
         ],
       },
