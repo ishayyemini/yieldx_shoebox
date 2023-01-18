@@ -156,12 +156,14 @@ const TextField: ForwardRefExoticComponent<
   )
 })
 
-const Loader: FC<{ full?: boolean }> = ({ full }) => {
+const Loader: FC<{ full?: boolean; size?: string }> = ({ full, size }) => {
   const spinner = (
     <Box align={'center'} justify={'center'} fill>
       <Oval
         secondaryColor={'var(--surface-variant)'}
         color={'var(--primary)'}
+        height={size}
+        width={size}
       />
     </Box>
   )
@@ -175,4 +177,30 @@ const Loader: FC<{ full?: boolean }> = ({ full }) => {
   )
 }
 
-export { TextField, Loader }
+// const FAB = styled(Button)`
+//   width: 48px;
+//   height: 48px;
+//   padding: 0;
+//   align-items: center;
+//   justify-content: center;
+//   display: flex;
+//   box-shadow: black 0 0 10px 10px;
+// `
+
+const CollapsibleSide = styled(Box).attrs({
+  round: { corner: 'left', size: 'medium' },
+})<{ open: boolean }>`
+  position: absolute;
+  align-self: center;
+  height: 300px;
+  width: ${(props) => (props.open ? '350px' : '0px')};
+  box-shadow: ${(props) =>
+    props.open ? 'rgb(0 0 0 / 30%) 0 0 100vw 100px' : 'none'};
+  transition: width 0.3s ease 0s, box-shadow 0.3s ease 0s;
+  right: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--surface-variant);
+`
+
+export { TextField, Loader, CollapsibleSide }

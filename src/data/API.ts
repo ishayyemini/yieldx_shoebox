@@ -41,6 +41,17 @@ export type DeviceType = {
   DateUpdated?: string
 }
 
+export type LastSensorsType = {
+  UID?: string
+  Time?: string
+  Temperature?: number
+  Humidity?: number
+  Pressure?: number
+  VOC?: number
+  CO2?: number
+  NOx?: number
+}
+
 class APIClass {
   _config: { user: string } = { user: '' }
   _setGlobalState: UpdateContextType = () => null
@@ -94,6 +105,13 @@ class APIClass {
         this._setGlobalState((oldCtx) => ({ ...oldCtx, deviceList: res ?? [] }))
         return res ?? []
       })
+  }
+
+  async getLastSensors(MAC: string): Promise<LastSensorsType> {
+    return await fetch(
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-last-sensors?' +
+        queryString.stringify({ MAC })
+    ).then((res) => res.json() ?? {})
   }
 }
 

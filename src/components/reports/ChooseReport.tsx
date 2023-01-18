@@ -38,7 +38,7 @@ const ChooseReport = () => {
           header: t(`report.${property}`),
           render: ['dateCreated', 'DateToDB'].includes(property)
             ? (datum: ReportType) => (
-                <>{new Date(datum.dateCreated).toLocaleString('en-GB')}</>
+                <>{new Date(datum.dateCreated).toLocaleString()}</>
               )
             : undefined,
         })),

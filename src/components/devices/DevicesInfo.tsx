@@ -1,11 +1,12 @@
 import { useContext } from 'react'
-import { Outlet, useNavigate, useParams } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Box, Card, DataTable } from 'grommet'
 import * as Icons from 'grommet-icons'
 
 import { DeviceType } from '../../data/API'
 import GlobalContext from '../../data/GlobalContext'
+import { CollapsibleSide } from '../app/AppComponents'
 
 const DevicesInfo = () => {
   const { MAC } = useParams() as { MAC?: string }
@@ -14,9 +15,10 @@ const DevicesInfo = () => {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
+  const { pathname } = useLocation()
 
   return (
-    <Box direction={'row'} fill>
+    <Box style={{ position: 'relative' }} direction={'row'} fill>
       <Box fill={'vertical'} basis={'200px'} flex={'grow'} overflow={'auto'}>
         {deviceList?.length ? (
           <DataTable
@@ -30,7 +32,7 @@ const DevicesInfo = () => {
                 header: t('device.DateUpdated'),
                 render: (datum: DeviceType) =>
                   datum.DateUpdated ? (
-                    <>{new Date(datum.DateUpdated).toLocaleString('en-GB')}</>
+                    <>{new Date(datum.DateUpdated).toLocaleString()}</>
                   ) : null,
               },
               ...['Location', 'House', 'InHouseLoc', 'FW'].map((property) => ({
@@ -63,7 +65,11 @@ const DevicesInfo = () => {
               })),
             ]}
             data={deviceList}
-            onClickRow={({ datum }) => navigate(datum.MAC)}
+            onClickRow={({ datum }) =>
+              pathname.endsWith(datum.MAC)
+                ? navigate('/devices')
+                : navigate(datum.MAC)
+            }
             rowProps={{ [MAC ?? '']: { background: 'var(--primary)' } }}
             primaryKey={'MAC'}
             sort={{ property: 'DateUpdated', direction: 'desc' }}
@@ -78,9 +84,10 @@ const DevicesInfo = () => {
           </Box>
         )}
       </Box>
-      {/*<Box flex={false}>*/}
-      <Outlet />
-      {/*</Box>*/}
+
+      <CollapsibleSide open={!pathname.endsWith('/devices')}>
+        <Outlet />
+      </CollapsibleSide>
     </Box>
   )
 }

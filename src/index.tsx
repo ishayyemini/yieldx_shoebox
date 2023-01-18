@@ -11,7 +11,7 @@ import Reports, { reportsLoader } from './components/reports/Reports'
 import MainLayout, { mainLoader } from './components/MainLayout'
 import Devices, { devicesLoader } from './components/devices/Devices'
 import DevicesInfo from './components/devices/DevicesInfo'
-import DeviceView from './components/devices/DeviceView'
+import DeviceView, { deviceViewLoader } from './components/devices/DeviceView'
 
 const router = createBrowserRouter([
   {
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
                   {
                     path: ':MAC',
                     element: <DeviceView />,
-                    // children: [{ path: 'update', element: <div /> }],
+                    loader: deviceViewLoader,
                   },
                 ],
               },
