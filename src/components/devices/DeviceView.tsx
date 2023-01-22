@@ -36,19 +36,20 @@ const DeviceView = () => {
   )
 
   return (
-    <Box fill align={'center'} direction={'row'}>
+    <Box fill={'vertical'} basis={'400px'} border={'left'}>
       <Button
         icon={<Icons.Close />}
         onClick={() => navigate('/devices')}
         style={{ padding: '12px' }}
         plain
       />
-      <Box align={'center'} flex={'grow'}>
+      <Box align={'center'}>
         <Box
           margin={{ bottom: 'small' }}
           pad={{ bottom: 'small' }}
           border={'bottom'}
           fill={'horizontal'}
+          flex={false}
         >
           <Text textAlign={'center'}>
             {t('MAC')}: {device?.MAC ?? null}
@@ -64,7 +65,7 @@ const DeviceView = () => {
                   </Text>
                   {Object.entries(data).map(([key, value]) =>
                     value ? (
-                      <Text>
+                      <Text key={key}>
                         {t(key)}:{' '}
                         {key === 'Time'
                           ? new Date(value).toLocaleString()

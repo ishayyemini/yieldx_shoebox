@@ -6,7 +6,6 @@ import * as Icons from 'grommet-icons'
 
 import { DeviceType } from '../../data/API'
 import GlobalContext from '../../data/GlobalContext'
-import { CollapsibleSide } from '../app/AppComponents'
 
 const DevicesInfo = () => {
   const { MAC } = useParams() as { MAC?: string }
@@ -18,7 +17,7 @@ const DevicesInfo = () => {
   const { pathname } = useLocation()
 
   return (
-    <Box style={{ position: 'relative' }} direction={'row'} fill>
+    <Box direction={'row'} fill>
       <Box fill={'vertical'} basis={'200px'} flex={'grow'} overflow={'auto'}>
         {deviceList?.length ? (
           <DataTable
@@ -85,9 +84,7 @@ const DevicesInfo = () => {
         )}
       </Box>
 
-      <CollapsibleSide open={!pathname.endsWith('/devices')}>
-        <Outlet />
-      </CollapsibleSide>
+      <Outlet />
     </Box>
   )
 }
