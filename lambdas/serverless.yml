@@ -63,6 +63,12 @@ functions:
                 { 
                   "MAC" : "$input.params('MAC')"
                 }
-                
-    
 
+  get_ota_list:
+    handler: get_ota_list.default
+    events:
+      - http:
+          method: get
+          path: get-ota-list
+          integration: lambda
+          cors: true
