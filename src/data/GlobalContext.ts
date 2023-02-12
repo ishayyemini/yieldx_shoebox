@@ -15,6 +15,7 @@ export type ContextType = {
   report?: ReportType
   reportList?: ReportType[]
   deviceList?: DeviceType[]
+  otaList?: string[]
   updateContext: UpdateContextType
 }
 

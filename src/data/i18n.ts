@@ -57,6 +57,10 @@ i18n
           DevicesInfo: {
             title: 'Devices',
             empty: 'No devices found',
+            update: 'Update',
+            chooseFile: 'Choose firmware file:',
+            willUpdate: 'Devices to be updated:',
+            pushUpdate: 'Push Update',
           },
           DeviceView: {
             MAC: 'MAC',

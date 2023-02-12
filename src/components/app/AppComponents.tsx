@@ -189,13 +189,18 @@ const Loader: FC<{ full?: boolean; size?: string }> = ({ full, size }) => {
 
 const CollapsibleSide = styled(Box).attrs({
   round: { corner: 'left', size: 'medium' },
-})<{ open: boolean }>`
+})<{ open: boolean | string }>`
   position: absolute;
   align-self: center;
   height: 300px;
-  width: ${(props) => (props.open ? '350px' : '0px')};
+  width: ${(props) =>
+    props.open
+      ? typeof props.open === 'string'
+        ? props.open
+        : '350px'
+      : '0px'};
   box-shadow: ${(props) =>
-    props.open ? 'rgb(0 0 0 / 30%) 0 0 100vw 100px' : 'none'};
+    props.open ? 'rgb(0 0 0 / 10%) 0 0 50px 50px' : 'none'};
   transition: width 0.3s ease 0s, box-shadow 0.3s ease 0s;
   right: 0;
   z-index: 1;

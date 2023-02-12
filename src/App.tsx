@@ -17,6 +17,9 @@ const theme: ThemeType = {
       border: 'var(--outline-variant)',
     },
   },
+  checkBox: {
+    color: 'var(--primary)',
+  },
   dataTable: {
     pinned: { header: { background: 'var(--background)' } },
     body: {

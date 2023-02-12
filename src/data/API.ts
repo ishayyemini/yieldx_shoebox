@@ -113,6 +113,17 @@ class APIClass {
         queryString.stringify({ MAC })
     ).then((res) => res.json() ?? {})
   }
+
+  async getOTAList(): Promise<string[]> {
+    return await fetch(
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-ota-list'
+    )
+      .then((res) => res.json() ?? [])
+      .then((res) => {
+        this._setGlobalState((oldCtx) => ({ ...oldCtx, otaList: res }))
+        return res
+      })
+  }
 }
 
 const API: APIClass = new APIClass()
