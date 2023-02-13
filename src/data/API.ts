@@ -139,6 +139,17 @@ class APIClass {
     this._config.mqttAddress = `mqtt://${mqttServer}:${mqttPort}`
     localStorage.setItem('mqttAddress', this._config.mqttAddress)
   }
+
+  async pushUpdate(devices: string[], version: string): Promise<void> {
+    await fetch(
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/push-update?' +
+        queryString.stringify({
+          devices: devices.toString(),
+          version,
+          ...this._config,
+        })
+    )
+  }
 }
 
 const API: APIClass = new APIClass()

@@ -74,3 +74,25 @@ functions:
           path: get-ota-list
           integration: lambda
           cors: true
+
+  push_update:
+    handler: push_update.default
+    events:
+      - http:
+          method: get
+          path: push-update
+          integration: lambda
+          cors: true
+          request:
+            parameters:
+              querystrings:
+                mqttAddress: false
+                devices: true
+                version: true
+            template:
+              application/json: |
+                { 
+                  "mqttAddress" : "$input.params('mqttAddress')",
+                  "devices" : "$input.params('devices')",
+                  "version" : "$input.params('version')"
+                }

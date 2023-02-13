@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Box, Button, Card, CheckBox, DataTable, Select, Text } from 'grommet'
@@ -6,7 +6,7 @@ import * as Icons from 'grommet-icons'
 
 import API, { DeviceType } from '../../data/API'
 import GlobalContext from '../../data/GlobalContext'
-import { CollapsibleSide } from '../app/AppComponents'
+import { CollapsibleSide, Loader } from '../app/AppComponents'
 
 const DevicesInfo = () => {
   const { MAC } = useParams() as { MAC?: string }
@@ -14,7 +14,8 @@ const DevicesInfo = () => {
 
   const [devices, setDevices] = useState<string[]>([])
   const [open, setOpen] = useState<boolean | string>(false)
-  const [version, setVersion] = useState<string>()
+  const [version, setVersion] = useState<string>('')
+  const [loading, toggleLoading] = useState<boolean>(false)
 
   const { t } = useTranslation()
 
@@ -29,6 +30,19 @@ const DevicesInfo = () => {
     if (devices.length) setOpen((prevOpen) => prevOpen || true)
     else setOpen(false)
   }, [devices])
+
+  const pushUpdate = useCallback(() => {
+    console.log(version, devices)
+    if (version && devices.length) {
+      toggleLoading(true)
+      API.pushUpdate(devices, version).then(() => {
+        setOpen(false)
+        toggleLoading(false)
+        setDevices([])
+        setVersion('')
+      })
+    }
+  }, [devices, version])
 
   return (
     <Box direction={'row'} fill>
@@ -118,37 +132,52 @@ const DevicesInfo = () => {
       </Box>
 
       <CollapsibleSide open={open} direction={'row'}>
-        <Button
-          icon={open === '48px' ? <Icons.Previous /> : <Icons.Next />}
-          onClick={() =>
-            setOpen((prevOpen) => (prevOpen === '48px' ? true : '48px'))
-          }
-          style={{ padding: '12px' }}
-          plain
-        />
-        <Box
-          align={'center'}
-          justify={'center'}
-          gap={'small'}
-          pad={'small'}
-          overflow={'hidden'}
-        >
-          <Text weight={'bold'}>{t('DevicesInfo.chooseFile')}</Text>
-          <Select
-            value={version}
-            options={otaList ?? []}
-            onChange={({ option }) => setVersion(option)}
-          />
-          <Text weight={'bold'}>{t('DevicesInfo.willUpdate')}</Text>
-          <Box overflow={'auto'}>
-            {devices.map((item) => (
-              <Box margin={'1px 5px'} border={'bottom'} flex={false} key={item}>
-                {item}
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <Button
+              icon={open === '48px' ? <Icons.Previous /> : <Icons.Next />}
+              onClick={() =>
+                setOpen((prevOpen) => (prevOpen === '48px' ? true : '48px'))
+              }
+              style={{ padding: '12px' }}
+              plain
+            />
+            <Box
+              align={'center'}
+              justify={'center'}
+              gap={'small'}
+              pad={'small'}
+              overflow={'hidden'}
+            >
+              <Text weight={'bold'}>{t('DevicesInfo.chooseFile')}</Text>
+              <Select
+                value={version}
+                options={otaList ?? []}
+                onChange={({ option }) => setVersion(option)}
+              />
+              <Text weight={'bold'}>{t('DevicesInfo.willUpdate')}</Text>
+              <Box overflow={'auto'}>
+                {devices.map((item) => (
+                  <Box
+                    margin={'1px 5px'}
+                    border={'bottom'}
+                    flex={false}
+                    key={item}
+                  >
+                    {item}
+                  </Box>
+                ))}
               </Box>
-            ))}
-          </Box>
-          <Button label={t('DevicesInfo.pushUpdate')} primary />
-        </Box>
+              <Button
+                onClick={pushUpdate}
+                label={t('DevicesInfo.pushUpdate')}
+                primary
+              />
+            </Box>
+          </>
+        )}
       </CollapsibleSide>
 
       <Outlet />
