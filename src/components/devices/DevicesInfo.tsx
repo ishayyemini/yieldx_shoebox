@@ -140,7 +140,7 @@ const DevicesInfo = () => {
             onChange={({ option }) => setVersion(option)}
           />
           <Text weight={'bold'}>{t('DevicesInfo.willUpdate')}</Text>
-          <Box overflow={'auto'} border={'between'}>
+          <Box overflow={'auto'}>
             {devices.map((item) => (
               <Box margin={'1px 5px'} border={'bottom'} flex={false} key={item}>
                 {item}

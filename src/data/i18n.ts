@@ -74,6 +74,13 @@ i18n
             CO2: 'CO2',
             NOx: 'NOx',
           },
+          Settings: {
+            title: 'Settings',
+            mqtt: 'MQTT',
+            mqttServer: 'Server',
+            mqttPort: 'Port',
+            save: 'Save Settings',
+          },
         },
       },
     },

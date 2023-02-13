@@ -57,6 +57,11 @@ const TopMenu: FC<{ signOut: () => void }> = ({ signOut }) => {
         label={t('DevicesInfo.title')}
         to={'/devices'}
       />
+      <NavButton
+        icon={<Icons.SettingsOption />}
+        label={t('Settings.title')}
+        to={'/settings'}
+      />
       <Button label={t('signOut')} onClick={signOut} secondary />
     </Card>
   )

@@ -41,7 +41,7 @@ const theme: ThemeType = {
       round: 'small',
       elevation: 'none',
       extend: css`
-        color: var(--on-surface-variant);
+        //color: var(--on-surface-variant);
       `,
     },
   },

@@ -1,13 +1,14 @@
 const mqtt = require('mqtt')
 
-const get_devices = async ({ username }) => {
+const get_devices = async ({ username, mqttAddress }) => {
+  if (username === 'all') username = ''
   console.log(
     `Fetching devices belonging to ${username ? `"${username}"` : 'everyone'}`
   )
 
   const config = { clean: true, secure: false }
   const client = await mqtt.connect(
-    'mqtt://broker.mqttdashboard.com:1883',
+    mqttAddress || 'mqtt://broker.mqttdashboard.com:1883',
     config
   )
 

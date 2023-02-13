@@ -143,7 +143,7 @@ const TextField: ForwardRefExoticComponent<
           <span>{label}</span>
         </label>
         <fieldset>
-          <legend>{label}</legend>
+          <legend style={{ whiteSpace: 'nowrap' }}>{label}</legend>
         </fieldset>
         {error ? <Icons.StatusCritical color={'var(--error)'} /> : null}
       </TextFieldWrapper>

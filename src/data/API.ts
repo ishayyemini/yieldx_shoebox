@@ -52,8 +52,18 @@ export type LastSensorsType = {
   NOx?: number
 }
 
+type APIConfigType = {
+  username: string
+  mqttAddress?: string
+}
+
+export type SettingsType = {
+  mqttServer: string
+  mqttPort: number
+}
+
 class APIClass {
-  _config: { user: string } = { user: '' }
+  _config: APIConfigType = { username: '' }
   _setGlobalState: UpdateContextType = () => null
 
   configure(setGlobalState?: UpdateContextType) {
@@ -61,31 +71,31 @@ class APIClass {
   }
 
   async getCurrentUser(): Promise<string> {
-    const user = localStorage.getItem('user')
-    if (!user) throw new Error('No authenticated user')
-    this._config.user = user
-    return user
+    const username = localStorage.getItem('user')
+    if (!username) throw new Error('No authenticated user')
+    this._config.mqttAddress = localStorage.getItem('mqttAddress') ?? undefined
+    this._config.username = username
+    return username
   }
 
-  async signIn(user: string): Promise<string> {
+  async signIn(username: string): Promise<string> {
     await new Promise((r) => setTimeout(r, 1000))
-    user = user.toLowerCase()
-    localStorage.setItem('user', user)
-    this._config.user = user
-    return user
+    username = username.toLowerCase()
+    localStorage.setItem('user', username)
+    this._config.mqttAddress = localStorage.getItem('mqttAddress') ?? undefined
+    this._config.username = username
+    return username
   }
 
   async signOut(): Promise<void> {
-    localStorage.removeItem('user')
-    localStorage.removeItem('settings')
-    this._config.user = ''
+    localStorage.clear()
+    this._config.username = ''
   }
 
   async getReports(): Promise<ReportType[]> {
-    const username = this._config.user === 'all' ? '' : this._config.user
     return await fetch(
       'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-reports?' +
-        queryString.stringify({ username })
+        queryString.stringify({ ...this._config })
     )
       .then((res) => res.json())
       .then((res) => {
@@ -95,10 +105,9 @@ class APIClass {
   }
 
   async getDevices(): Promise<DeviceType[]> {
-    const username = this._config.user === 'all' ? '' : this._config.user
     return await fetch(
       'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-devices?' +
-        queryString.stringify({ username })
+        queryString.stringify({ ...this._config })
     )
       .then((res) => res.json())
       .then((res) => {
@@ -123,6 +132,12 @@ class APIClass {
         this._setGlobalState((oldCtx) => ({ ...oldCtx, otaList: res }))
         return res
       })
+  }
+
+  async saveSettings({ mqttServer, mqttPort }: SettingsType): Promise<void> {
+    await new Promise((r) => setTimeout(r, 1000))
+    this._config.mqttAddress = `mqtt://${mqttServer}:${mqttPort}`
+    localStorage.setItem('mqttAddress', this._config.mqttAddress)
   }
 }
 

@@ -1,6 +1,7 @@
 const sql = require('mssql')
 
 const get_reports = async ({ username }) => {
+  if (username === 'all') username = ''
   console.log(`Fetching reports of ${username ? `"${username}"` : 'everyone'}`)
 
   const config = {

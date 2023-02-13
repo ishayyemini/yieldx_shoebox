@@ -40,10 +40,12 @@ functions:
             parameters:
               querystrings:
                 username: false
+                mqttAddress: false
             template:
               application/json: |
                 { 
-                  "username" : "$input.params('username')"
+                  "username" : "$input.params('username')",
+                  "mqttAddress" : "$input.params('mqttAddress')"
                 }
 
   get_last_sensors:
