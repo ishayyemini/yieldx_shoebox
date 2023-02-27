@@ -32,6 +32,7 @@ const MainLayout = () => {
 
   useEffect(() => {
     API.configure(setGlobalState)
+    API.subscribeToDevices()
   }, [])
 
   useEffect(() => {

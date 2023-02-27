@@ -12,7 +12,7 @@ import MainLayout, { mainLoader } from './components/MainLayout'
 import Devices, { devicesLoader } from './components/devices/Devices'
 import DevicesInfo from './components/devices/DevicesInfo'
 import DeviceView, { deviceViewLoader } from './components/devices/DeviceView'
-import Settings, { settingsLoader } from './components/settings/Settings'
+import Settings from './components/settings/Settings'
 
 const router = createBrowserRouter([
   {
@@ -56,7 +56,6 @@ const router = createBrowserRouter([
           {
             path: 'settings',
             element: <Settings />,
-            loader: settingsLoader,
           },
         ],
       },

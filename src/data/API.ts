@@ -1,6 +1,8 @@
 import queryString from 'query-string'
+import mqtt from 'mqtt/dist/mqtt'
 
 import { UpdateContextType } from './GlobalContext'
+import { SettingsType } from '../components/settings/Settings'
 
 export type ReportType = {
   UID: string
@@ -38,7 +40,7 @@ export type DeviceType = {
   Online: boolean
   Cycle?: number
   Stage?: number
-  DateUpdated?: string
+  DateUpdated?: Date
 }
 
 export type LastSensorsType = {
@@ -54,12 +56,11 @@ export type LastSensorsType = {
 
 type APIConfigType = {
   username: string
-  mqttAddress?: string
-}
-
-export type SettingsType = {
-  mqttServer: string
-  mqttPort: number
+  mqtt: {
+    server: string
+    port: number
+    basePath: string
+  }
 }
 
 export type ReportDataType = {
@@ -72,27 +73,67 @@ export type ReportDataType = {
 }
 
 class APIClass {
-  _config: APIConfigType = { username: '' }
+  _config: APIConfigType = {
+    username: '',
+    mqtt: { server: 'broker.mqttdashboard.com', port: 8000, basePath: '/mqtt' },
+  }
   _setGlobalState: UpdateContextType = () => null
+  _client: mqtt.MqttClient | null = null
 
   configure(setGlobalState?: UpdateContextType) {
     if (setGlobalState) this._setGlobalState = setGlobalState
   }
 
+  async setupMqtt(
+    server: string,
+    port: number,
+    basePath: string
+  ): Promise<mqtt.MqttClient> {
+    return new Promise((resolve, reject) => {
+      const client = mqtt.connect(`ws://${server}:${port}/${basePath}`)
+      const timeout = setTimeout(() => {
+        console.error('Failed to connect')
+        client.end()
+        reject('Connection timed out')
+      }, 5000)
+      client.on('connect', () => {
+        clearTimeout(timeout)
+        resolve(client)
+      })
+      client.on('error', (err) => {
+        console.error('Connection error: ', err)
+        client.end()
+        reject(err)
+      })
+      window.onbeforeunload = () => {
+        client.end()
+      }
+    })
+  }
+
+  async loadUser(username: string): Promise<string> {
+    let { server, port, basePath } = JSON.parse(
+      localStorage.getItem('mqtt') || '{}'
+    )
+    if (!server) server = 'broker.mqttdashboard.com'
+    if (!port) port = 8000
+    if (!basePath && basePath !== '') basePath = 'mqtt'
+    this._config.mqtt = { server, port, basePath }
+    this._config.username = username
+    this._client = await this.setupMqtt(server, port, basePath)
+    return username
+  }
+
   async getCurrentUser(): Promise<string> {
     const username = localStorage.getItem('user')
     if (!username) throw new Error('No authenticated user')
-    this._config.mqttAddress = localStorage.getItem('mqttAddress') ?? undefined
-    this._config.username = username
-    return username
+    return this.loadUser(username)
   }
 
   async signIn(username: string): Promise<string> {
     await new Promise((r) => setTimeout(r, 1000))
     username = username.toLowerCase()
     localStorage.setItem('user', username)
-    this._config.mqttAddress = localStorage.getItem('mqttAddress') ?? undefined
-    this._config.username = username
     return username
   }
 
@@ -125,6 +166,53 @@ class APIClass {
       })
   }
 
+  subscribeToDevices(): void {
+    if (this._client) {
+      this._setGlobalState((oldCtx) => ({ ...oldCtx, devices: {} }))
+      this._client.subscribe('Stat/#')
+      this._client.on('message', (topic, payload) => {
+        if (topic.startsWith('Stat/') && topic.split('/').length === 5) {
+          const MAC = topic.split('/').pop() || ''
+          const p: DeviceType = {
+            MAC,
+            Customer: '',
+            Location: '',
+            House: '',
+            InHouseLoc: '',
+            FW: '',
+            Adapters: {},
+            Online: false,
+          }
+          const ps = payload.toString()
+          const [Location, House, InHouseLoc] = topic.split('/').slice(1, 4)
+          p.Location = Location
+          p.House = House
+          p.InHouseLoc = InHouseLoc
+          const Cycle = Number(ps.match(/(?<=Cycle:)\d+/)?.[0])
+          if (!isNaN(Cycle)) p.Cycle = Cycle
+          const Stage = Number(ps.match(/(?<=Stage:)\d+/)?.[0])
+          if (!isNaN(Stage)) p.Stage = Stage
+          p.FW = ps.match(/(?<=FW:)[0-9.]{8}/)?.[0] ?? ''
+          p.Adapters = Object.fromEntries(
+            ps
+              .match(/(?<=Adapters:).+(?= ,)/)?.[0]
+              .split(' ')
+              .map((item: string) => item.split(/:(.*)/)) ?? []
+          )
+          p.Online = ps.includes('*** Online ***')
+          const time = ps.match(/(?<=GMT:).+?(?=: )/)?.[0]
+          if (time) p.DateUpdated = new Date(time + '+00:00')
+          console.log(p)
+          if (p.Location)
+            this._setGlobalState((oldCtx) => ({
+              ...oldCtx,
+              devices: { ...(oldCtx.devices || {}), [MAC]: p },
+            }))
+        }
+      })
+    }
+  }
+
   async getLastSensors(MAC: string): Promise<LastSensorsType> {
     return await fetch(
       'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-last-sensors?' +
@@ -143,10 +231,12 @@ class APIClass {
       })
   }
 
-  async saveSettings({ mqttServer, mqttPort }: SettingsType): Promise<void> {
-    await new Promise((r) => setTimeout(r, 1000))
-    this._config.mqttAddress = `mqtt://${mqttServer}:${mqttPort}`
-    localStorage.setItem('mqttAddress', this._config.mqttAddress)
+  async saveSettings({ mqtt }: SettingsType): Promise<void> {
+    this._client?.end()
+    this._client = await this.setupMqtt(mqtt.server, mqtt.port, mqtt.basePath)
+    this._config.mqtt = mqtt
+    localStorage.setItem('mqtt', JSON.stringify(mqtt))
+    this.subscribeToDevices()
   }
 
   async pushUpdate(devices: string[], version: string): Promise<void> {

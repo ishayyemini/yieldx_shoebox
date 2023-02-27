@@ -10,9 +10,9 @@ import { CollapsibleSide, Loader } from '../app/AppComponents'
 
 const DevicesInfo = () => {
   const { MAC } = useParams() as { MAC?: string }
-  const { deviceList, otaList } = useContext(GlobalContext)
+  const { devices, otaList } = useContext(GlobalContext)
 
-  const [devices, setDevices] = useState<string[]>([])
+  const [updateDevices, setUpdateDevices] = useState<string[]>([])
   const [open, setOpen] = useState<boolean | string>(false)
   const [version, setVersion] = useState<string>('')
   const [loading, toggleLoading] = useState<boolean>(false)
@@ -27,27 +27,27 @@ const DevicesInfo = () => {
   }, [])
 
   useEffect(() => {
-    if (devices.length) setOpen((prevOpen) => prevOpen || true)
+    if (updateDevices.length) setOpen((prevOpen) => prevOpen || true)
     else setOpen(false)
-  }, [devices])
+  }, [updateDevices])
 
   const pushUpdate = useCallback(() => {
-    console.log(version, devices)
-    if (version && devices.length) {
+    console.log(version, updateDevices)
+    if (version && updateDevices.length) {
       toggleLoading(true)
-      API.pushUpdate(devices, version).then(() => {
+      API.pushUpdate(updateDevices, version).then(() => {
         setOpen(false)
         toggleLoading(false)
-        setDevices([])
+        setUpdateDevices([])
         setVersion('')
       })
     }
-  }, [devices, version])
+  }, [updateDevices, version])
 
   return (
     <Box direction={'row'} fill>
       <Box fill={'vertical'} basis={'200px'} flex={'grow'} overflow={'auto'}>
-        {deviceList?.length ? (
+        {Object.values(devices ?? {}).length ? (
           <DataTable
             columns={[
               {
@@ -56,9 +56,9 @@ const DevicesInfo = () => {
                 render: (datum: DeviceType) => (
                   <Box align={'center'}>
                     <CheckBox
-                      checked={devices.includes(datum.MAC)}
+                      checked={updateDevices.includes(datum.MAC)}
                       onChange={(e) => {
-                        setDevices((prevDevices) =>
+                        setUpdateDevices((prevDevices) =>
                           e.target.checked
                             ? [datum.MAC, ...prevDevices]
                             : prevDevices.filter((item) => item !== datum.MAC)
@@ -109,7 +109,7 @@ const DevicesInfo = () => {
                 header: t(`device.${property}`),
               })),
             ]}
-            data={deviceList}
+            data={Object.values(devices ?? {})}
             onClickRow={(e) => {
               if (!(e.target instanceof HTMLInputElement)) {
                 if (pathname.endsWith(e.datum.MAC)) navigate('/devices')
@@ -159,7 +159,7 @@ const DevicesInfo = () => {
               />
               <Text weight={'bold'}>{t('DevicesInfo.willUpdate')}</Text>
               <Box overflow={'auto'}>
-                {devices.map((item) => (
+                {updateDevices.map((item) => (
                   <Box
                     margin={'1px 5px'}
                     border={'bottom'}

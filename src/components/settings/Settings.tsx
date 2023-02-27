@@ -1,39 +1,38 @@
-import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
+import { useCallback, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 import { Box, Button, Card, Form, Text } from 'grommet'
 import { useTranslation } from 'react-i18next'
-import { useLoaderData } from 'react-router-dom'
 
 import { Loader, TextField } from '../app/AppComponents'
 import API from '../../data/API'
 
-export const settingsLoader = () => {
-  const address = localStorage.getItem('mqttAddress') ?? ''
-  const mqttServer =
-    address.match(/(?<=:\/\/).+(?=:)/)?.[0] ?? 'broker.mqttdashboard.com'
-  const mqttPort = Number(address.match(/([^:]\d*)$/)?.[0] ?? '1883')
-  return { mqttServer, mqttPort }
+export type SettingsType = {
+  mqtt: {
+    server: string
+    port: number
+    basePath: string
+  }
 }
 
 const Settings = () => {
-  const { mqttServer, mqttPort } = useLoaderData() as {
-    mqttServer: string
-    mqttPort: number
-  }
+  const [formError, setFormError] = useState('')
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm({ defaultValues: { mqttServer, mqttPort } })
+  } = useForm({ defaultValues: { mqtt: API._config.mqtt } })
 
   const { t } = useTranslation(undefined, { keyPrefix: 'Settings' })
 
-  const onSubmit = useCallback<
-    (values: { mqttServer: string; mqttPort: number }) => Promise<void>
-  >(async (values) => {
-    await API.saveSettings(values)
-  }, [])
+  const onSubmit = useCallback<SubmitHandler<SettingsType>>(
+    async (values) => {
+      await API.saveSettings(values)
+        .then(() => setFormError(''))
+        .catch(() => setFormError(t('connectionError') ?? ''))
+    },
+    [t]
+  )
 
   return (
     <Box justify={'center'} align={'center'} fill>
@@ -43,17 +42,26 @@ const Settings = () => {
             <Box gap={'small'} pad={{ bottom: 'small' }} border={'bottom'}>
               <Text weight={'bold'}>{t('mqtt')}</Text>
               <TextField
-                {...register('mqttServer')}
+                {...register('mqtt.server')}
                 label={t('mqttServer')}
-                error={errors.mqttServer?.message}
+                error={errors.mqtt?.server?.message}
               />
               <TextField
-                {...register('mqttPort', {
+                {...register('mqtt.port', {
                   setValueAs: (value) => Number(value),
                 })}
                 label={t('mqttPort')}
-                error={errors.mqttPort?.message}
+                error={errors.mqtt?.port?.message}
               />
+              <TextField
+                {...register('mqtt.basePath')}
+                label={t('mqttBasePath')}
+                error={errors.mqtt?.basePath?.message}
+              />
+
+              {formError ? (
+                <Text color={'var(--error)'}>{formError}</Text>
+              ) : null}
             </Box>
 
             <Button
