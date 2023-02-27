@@ -28,6 +28,25 @@ functions:
                   "username" : "$input.params('username')"
                 }
 
+  get_report_data:
+    handler: get_report_data.default
+    events:
+      - http:
+          method: get
+          path: get-report-data
+          integration: lambda
+          request:
+            parameters:
+              querystrings:
+                username: true
+                UID: true
+            template:
+              application/json: |
+                { 
+                  "username" : "$input.params('username')",
+                  "UID" : "$input.params('UID')"
+                }
+
   get_devices:
     handler: get_devices.default
     events:

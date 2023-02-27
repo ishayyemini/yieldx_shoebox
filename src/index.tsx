@@ -6,7 +6,7 @@ import App from './App'
 import ChooseReport from './components/reports/ChooseReport'
 import SignIn, { signInAction } from './components/auth/SignIn'
 import AuthLayout from './components/AuthLayout'
-import ReportView from './components/reports/ReportView'
+import ReportView, { reportViewLoader } from './components/reports/ReportView'
 import Reports, { reportsLoader } from './components/reports/Reports'
 import MainLayout, { mainLoader } from './components/MainLayout'
 import Devices, { devicesLoader } from './components/devices/Devices'
@@ -29,7 +29,11 @@ const router = createBrowserRouter([
             loader: reportsLoader,
             children: [
               { index: true, element: <ChooseReport /> },
-              { path: ':UID', element: <ReportView /> },
+              {
+                path: ':UID',
+                element: <ReportView />,
+                loader: reportViewLoader,
+              },
             ],
           },
           {

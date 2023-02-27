@@ -62,6 +62,15 @@ export type SettingsType = {
   mqttPort: number
 }
 
+export type ReportDataType = {
+  UID: string
+  BoardID: string
+  'Sensor Index': number
+  'Sensor ID': number
+  'Time Since PowerOn': number
+  dateCreated: string
+}
+
 class APIClass {
   _config: APIConfigType = { username: '' }
   _setGlobalState: UpdateContextType = () => null
@@ -149,6 +158,13 @@ class APIClass {
           ...this._config,
         })
     )
+  }
+
+  async getReportData(UID: string): Promise<ReportDataType[]> {
+    return await fetch(
+      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-report-data?' +
+        queryString.stringify({ UID, ...this._config })
+    ).then((res) => res.json())
   }
 }
 
