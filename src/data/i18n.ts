@@ -56,7 +56,7 @@ i18n
           },
           DevicesInfo: {
             title: 'Devices',
-            empty: 'No devices found',
+            empty: 'Waiting for devices...',
             update: 'Update',
             chooseFile: 'Choose firmware file:',
             willUpdate: 'Devices to be updated:',

@@ -124,7 +124,8 @@ const DevicesInfo = () => {
           />
         ) : (
           <Box align={'center'} justify={'center'} fill>
-            <Card align={'center'} gap={'medium'}>
+            <Card align={'center'} gap={'small'}>
+              <Loader size={'36px'} />
               {t('DevicesInfo.empty')}
             </Card>
           </Box>

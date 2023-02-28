@@ -154,18 +154,6 @@ class APIClass {
       })
   }
 
-  async getDevices(): Promise<DeviceType[]> {
-    return await fetch(
-      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-devices?' +
-        queryString.stringify({ ...this._config })
-    )
-      .then((res) => res.json())
-      .then((res) => {
-        this._setGlobalState((oldCtx) => ({ ...oldCtx, deviceList: res ?? [] }))
-        return res ?? []
-      })
-  }
-
   subscribeToDevices(): void {
     if (this._client) {
       this._setGlobalState((oldCtx) => ({ ...oldCtx, devices: {} }))

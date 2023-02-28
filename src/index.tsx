@@ -9,7 +9,6 @@ import AuthLayout from './components/AuthLayout'
 import ReportView, { reportViewLoader } from './components/reports/ReportView'
 import Reports, { reportsLoader } from './components/reports/Reports'
 import MainLayout, { mainLoader } from './components/MainLayout'
-import Devices, { devicesLoader } from './components/devices/Devices'
 import DevicesInfo from './components/devices/DevicesInfo'
 import DeviceView, { deviceViewLoader } from './components/devices/DeviceView'
 import Settings from './components/settings/Settings'
@@ -37,19 +36,13 @@ const router = createBrowserRouter([
             ],
           },
           {
-            element: <Devices />,
-            loader: devicesLoader,
+            path: 'devices',
+            element: <DevicesInfo />,
             children: [
               {
-                path: 'devices',
-                element: <DevicesInfo />,
-                children: [
-                  {
-                    path: ':MAC',
-                    element: <DeviceView />,
-                    loader: deviceViewLoader,
-                  },
-                ],
+                path: ':MAC',
+                element: <DeviceView />,
+                loader: deviceViewLoader,
               },
             ],
           },
