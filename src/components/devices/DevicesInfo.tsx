@@ -56,12 +56,21 @@ const DevicesInfo = () => {
                 render: (datum: DeviceType) => (
                   <Box align={'center'}>
                     <CheckBox
-                      checked={updateDevices.includes(datum.MAC)}
+                      checked={updateDevices.includes(
+                        `${datum.Location}/${datum.House}/${datum.InHouseLoc}/${datum.MAC}`
+                      )}
                       onChange={(e) => {
                         setUpdateDevices((prevDevices) =>
                           e.target.checked
-                            ? [datum.MAC, ...prevDevices]
-                            : prevDevices.filter((item) => item !== datum.MAC)
+                            ? [
+                                `${datum.Location}/${datum.House}/${datum.InHouseLoc}/${datum.MAC}`,
+                                ...prevDevices,
+                              ]
+                            : prevDevices.filter(
+                                (item) =>
+                                  item !==
+                                  `${datum.Location}/${datum.House}/${datum.InHouseLoc}/${datum.MAC}`
+                              )
                         )
                       }}
                     />
@@ -167,7 +176,7 @@ const DevicesInfo = () => {
                     flex={false}
                     key={item}
                   >
-                    {item}
+                    {item.split('/')[3]}
                   </Box>
                 ))}
               </Box>

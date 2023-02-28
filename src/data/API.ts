@@ -228,14 +228,21 @@ class APIClass {
   }
 
   async pushUpdate(devices: string[], version: string): Promise<void> {
-    await fetch(
-      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/push-update?' +
-        queryString.stringify({
-          devices: devices.toString(),
-          version,
-          ...this._config,
-        })
+    await Promise.all(
+      devices.map(
+        (device) =>
+          new Promise<void>((resolve) => {
+            this._client?.publish(
+              `OTA/${device}`,
+              `http://3.127.195.30/ShoeBox/OTA/${version}`,
+              { retain: true },
+              () => resolve()
+            )
+          })
+      )
     )
+    // TODO get indication that software updated
+    // TODO fix update not syncing after device is online
   }
 
   async getReportData(UID: string): Promise<ReportDataType[]> {
