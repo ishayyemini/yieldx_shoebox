@@ -40,11 +40,13 @@ functions:
               querystrings:
                 username: true
                 UID: true
+                offset: false
             template:
               application/json: |
                 { 
                   "username" : "$input.params('username')",
-                  "UID" : "$input.params('UID')"
+                  "UID" : "$input.params('UID')",
+                  "offset" : "$input.params('offset')"
                 }
 
   get_devices:
