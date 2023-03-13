@@ -5,8 +5,6 @@ const get_report_data = async ({ username, UID, offset }) => {
   if (!offset) offset = 0
   console.log(`Fetching data of test number ${UID}, offsetting by ${offset}`)
 
-  const _fetchAmount = 5000
-
   const config = {
     user: 'sa',
     password: 'Yieldxbiz2021',
@@ -16,9 +14,10 @@ const get_report_data = async ({ username, UID, offset }) => {
   }
   await sql.connect(config).catch((e) => console.log(e))
 
-  const [records, countRes] = await new sql.Request()
-    .query(
-      `
+  const request = await new sql.Request()
+  request.stream = true
+  request.query(
+    `
 SELECT * 
 FROM SensorsData
 WHERE dateCreated = (
@@ -27,46 +26,31 @@ WHERE dateCreated = (
   WHERE UID = ${UID} 
   ${username ? `and Customer = '${username}'` : ''}
 )
-ORDER BY UID
-OFFSET ${offset} ROWS
-FETCH NEXT ${_fetchAmount} ROWS ONLY
-
-${
-  !offset
-    ? `
-SELECT Count(*) as row_count
-FROM SensorsData
-WHERE dateCreated = (
-  SELECT dateCreated
-  FROM Locations
-  WHERE UID = ${UID} 
-  ${username ? `and Customer = '${username}'` : ''}
-)
-`
-    : ''
-}
       `
-    )
-    .then((res) => {
-      console.log(res.rowsAffected)
-      if (res.err) console.log(res.err)
-      return res.recordsets || [[], []]
-    })
-    .catch((e) => console.log(e))
+  )
 
-  // sql.close()
+  request.pause()
 
-  console.log(`Done, fetched ${records?.length} records`)
-  const nextOffset =
-    records?.length === _fetchAmount ? offset + records?.length : null
+  // request.on('recordset', (columns) => {
+  //   // Emitted once for each recordset in a query
+  // })
+  //
+  // request.on('row', (row) => {
+  //   // Emitted for each row in a recordset
+  // })
+  //
+  // request.on('error', (err) => {
+  //   // May be emitted multiple times
+  // })
 
-  if (!nextOffset) sql.close()
+  // request.on('done', (result) => {
+  //   // Always emitted as the last one
+  //   console.log(result)
+  //   sql.close()
+  //   console.timeEnd('test')
+  // })
 
-  const requestsNeeded = !offset
-    ? Math.ceil((countRes?.[0]?.row_count || 1) / _fetchAmount) - 1
-    : null
-
-  return { requestsNeeded, records, nextOffset }
+  return request
 }
 
 module.exports.default = get_report_data
