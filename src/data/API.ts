@@ -247,9 +247,50 @@ class APIClass {
 
   async getReportData(UID: string): Promise<ReportDataType[]> {
     return await fetch(
-      'https://wm6dajo0id.execute-api.us-east-1.amazonaws.com/dev/get-report-data?' +
+      'http://3.127.195.30:5000/get-report-data?' +
         queryString.stringify({ UID, ...this._config })
-    ).then((res) => res.json())
+    ).then(async (res) => {
+      let rowCount: number | undefined = undefined
+      let rawData = ''
+      let rowsFetched = 0
+
+      const printing = setInterval(() => {
+        console.log(`Got ${rowsFetched} of ${rowCount} rows`)
+      }, 1000)
+
+      const rows: unknown = await new Promise((resolve, reject) => {
+        if (res.body)
+          res.body.pipeTo(
+            new WritableStream({
+              write(chunk) {
+                const chunkString = new TextDecoder().decode(chunk)
+                if (!isNaN(Number(chunkString)) && rowCount === undefined) {
+                  console.log(Number(chunkString))
+                  rowCount = Number(chunkString)
+                } else {
+                  rawData += chunkString
+                  rowsFetched += chunkString.match(/"UID":/g)?.length ?? 0
+                }
+              },
+              close() {
+                const rows = JSON.parse(rawData) as ReportDataType[]
+                console.log(
+                  `Fetching complete, got ${rows.length} of ${rowCount}`
+                )
+                resolve(rows)
+              },
+              abort(err) {
+                reject(err)
+              },
+            })
+          )
+        else reject('Nothing returned from server')
+      }).catch((err) => console.error(err))
+      clearInterval(printing)
+
+      if (Array.isArray(rows)) return rows
+      else return []
+    })
   }
 }
 
