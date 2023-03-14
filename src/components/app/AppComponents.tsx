@@ -5,10 +5,12 @@ import {
   PropsWithoutRef,
   RefAttributes,
 } from 'react'
-import { Box, Layer, Text } from 'grommet'
+import { Box, Card, Layer, Text } from 'grommet'
 import styled from 'styled-components'
 import * as Icons from 'grommet-icons'
 import { Oval } from 'react-loader-spinner'
+import 'react-circular-progressbar/dist/styles.css'
+import { buildStyles, CircularProgressbar } from 'react-circular-progressbar'
 
 const TextFieldWrapper = styled(Box)<{ error?: string }>`
   position: relative;
@@ -177,6 +179,47 @@ const Loader: FC<{ full?: boolean; size?: string }> = ({ full, size }) => {
   )
 }
 
+const ProgressLoader: FC<{
+  downloading: boolean
+  percentage: number
+  size?: string
+  seconds?: number
+}> = ({ downloading, percentage, size = '80px', seconds }) => {
+  return (
+    <Box align={'center'} justify={'center'} fill>
+      <Card align={'center'} justify={'center'} gap={'small'}>
+        <Box height={size} width={size}>
+          {downloading ? (
+            <CircularProgressbar
+              value={percentage}
+              text={`${percentage}%`}
+              styles={buildStyles({
+                pathColor: `var(--primary)`,
+                textColor: 'var(--primary)',
+                trailColor: 'var(--surface-variant)',
+                backgroundColor: 'var(--surface-variant)',
+                textSize: '24px',
+                strokeLinecap: 'flat',
+              })}
+              strokeWidth={5}
+            />
+          ) : (
+            <Oval
+              secondaryColor={'var(--surface-variant)'}
+              color={'var(--primary)'}
+              height={size}
+              width={size}
+            />
+          )}
+        </Box>
+        {!downloading ? 'Loading...' : null}
+        {!downloading && seconds ? ` ${seconds} seconds passed` : null}
+        {downloading ? 'Downloading...' : null}
+      </Card>
+    </Box>
+  )
+}
+
 // const FAB = styled(Button)`
 //   width: 48px;
 //   height: 48px;
@@ -208,4 +251,4 @@ const CollapsibleSide = styled(Box).attrs({
   background: var(--surface-variant);
 `
 
-export { TextField, Loader, CollapsibleSide }
+export { TextField, Loader, CollapsibleSide, ProgressLoader }

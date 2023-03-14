@@ -83,6 +83,10 @@ i18n
             save: 'Save Settings',
             connectionError: 'MQTT connection failed',
           },
+          ReportView: {
+            fetchError:
+              'Unexpected error occurred while fetching data. Please refresh the page to try again.',
+          },
         },
       },
     },

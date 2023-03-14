@@ -245,48 +245,66 @@ class APIClass {
     // TODO fix update not syncing after device is online
   }
 
-  async getReportData(UID: string): Promise<ReportDataType[]> {
-    return await fetch(
+  async getReportData(
+    UID: string,
+    setLoadStatus: (values: {
+      status: 'Loading' | 'Fetching' | 'Done' | 'Error'
+      rowsFetched: number
+      rowsTotal: number
+      seconds: number
+    }) => void
+  ): Promise<ReportDataType[]> {
+    return fetch(
       'http://3.127.195.30:5000/get-report-data?' +
         queryString.stringify({ UID, ...this._config })
     ).then(async (res) => {
-      let rowCount: number | undefined = undefined
+      let rowsTotal: number | undefined = undefined
       let rawData = ''
       let rowsFetched = 0
 
+      let seconds = 0
       const printing = setInterval(() => {
-        console.log(`Got ${rowsFetched} of ${rowCount} rows`)
+        if (rowsTotal) {
+          setLoadStatus({ status: 'Fetching', rowsFetched, rowsTotal, seconds })
+          seconds++
+        }
       }, 1000)
 
-      const rows: unknown = await new Promise((resolve, reject) => {
-        if (res.body)
-          res.body.pipeTo(
-            new WritableStream({
-              write(chunk) {
-                const chunkString = new TextDecoder().decode(chunk)
-                if (!isNaN(Number(chunkString)) && rowCount === undefined) {
-                  console.log(Number(chunkString))
-                  rowCount = Number(chunkString)
-                } else {
-                  rawData += chunkString
-                  rowsFetched += chunkString.match(/"UID":/g)?.length ?? 0
-                }
-              },
-              close() {
-                const rows = JSON.parse(rawData) as ReportDataType[]
-                console.log(
-                  `Fetching complete, got ${rows.length} of ${rowCount}`
-                )
-                resolve(rows)
-              },
-              abort(err) {
-                reject(err)
-              },
-            })
-          )
-        else reject('Nothing returned from server')
-      }).catch((err) => console.error(err))
+      const rows: ReportDataType[] | void = await new Promise(
+        (resolve, reject) => {
+          if (res.body)
+            res.body.pipeTo(
+              new WritableStream({
+                write(chunk) {
+                  const chunkString = new TextDecoder().decode(chunk)
+                  if (!isNaN(Number(chunkString)) && rowsTotal === undefined) {
+                    rowsTotal = Number(chunkString)
+                  } else {
+                    rawData += chunkString
+                    rowsFetched += chunkString.match(/"UID":/g)?.length ?? 0
+                  }
+                },
+                close() {
+                  const rows = JSON.parse(rawData) as ReportDataType[]
+                  resolve(rows)
+                },
+                abort(err) {
+                  reject(err)
+                },
+              })
+            )
+          else reject('Nothing returned from server')
+        }
+      )
+        .then((res) => (Array.isArray(res) ? (res as ReportDataType[]) : []))
+        .catch((err) => console.error(err))
       clearInterval(printing)
+      setLoadStatus({
+        status: rows ? 'Done' : 'Error',
+        rowsFetched,
+        rowsTotal: rows?.length ?? 0,
+        seconds: 0,
+      })
 
       if (Array.isArray(rows)) return rows
       else return []
