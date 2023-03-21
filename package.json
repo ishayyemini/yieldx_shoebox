@@ -3,26 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "compress-json": "^2.1.2",
-    "grommet": "^2.28.0",
-    "i18next": "^22.4.5",
+    "grommet": "^2.30.0",
+    "grommet-icons": "^4.10.0",
+    "i18next": "^22.4.13",
     "i18next-browser-languagedetector": "^7.0.1",
     "mqtt": "^4.3.7",
-    "nested-property": "^4.0.0",
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.41.0",
-    "react-i18next": "^12.1.1",
+    "react-hook-form": "^7.43.7",
+    "react-i18next": "^12.2.0",
     "react-loader-spinner": "^5.3.4",
-    "react-router-dom": "^6.6.1",
-    "react-scripts": "5.0.1",
-    "styled-components": "^5.3.6",
-    "web-vitals": "^2.1.4"
+    "react-router-dom": "^6.9.0",
+    "react-scripts": "^5.0.1",
+    "styled-components": "^5.3.9"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -76,9 +71,11 @@
     ]
   },
   "devDependencies": {
+    "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
-    "prettier": "^2.8.1",
+    "eslint-config-react-app": "^7.0.1",
+    "prettier": "^2.8.6",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.2"
   }
 }
